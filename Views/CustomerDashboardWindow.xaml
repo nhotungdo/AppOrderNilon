@@ -1,0 +1,543 @@
+<Window x:Class="AppOrderNilon.Views.CustomerDashboardWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Customer Dashboard - AppOrderNilon" Height="900" Width="1400"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        Background="#F5F5F5">
+    
+    <Window.Resources>
+        <DropShadowEffect x:Key="CardShadow" 
+                          BlurRadius="8" 
+                          Direction="270" 
+                          ShadowDepth="2" 
+                          Color="#22000000"/>
+        
+        <!-- Customer-specific styles -->
+        <Style x:Key="CustomerButton" TargetType="Button">
+            <Setter Property="Background" Value="#4CAF50"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="5"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#45A049"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#4CAF50" Padding="15">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Customer Dashboard" 
+                               FontSize="24" 
+                               FontWeight="Bold" 
+                               Foreground="White"/>
+                    <TextBlock Text="Quản lý đơn hàng và tài khoản" 
+                               FontSize="14" 
+                               Foreground="White" 
+                               Margin="0,5,0,0"/>
+                </StackPanel>
+                
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Text="Xin chào, " 
+                               Foreground="White" 
+                               VerticalAlignment="Center"/>
+                    <TextBlock x:Name="txtCustomerName" 
+                               Text="Công ty Xây dựng Minh Anh" 
+                               Foreground="White" 
+                               FontWeight="Bold" 
+                               VerticalAlignment="Center"/>
+                    
+                    <!-- Notification Badge -->
+                    <Border Background="#FF4444" 
+                            CornerRadius="10" 
+                            Width="20" 
+                            Height="20" 
+                            Margin="15,0,0,0"
+                            VerticalAlignment="Center">
+                        <TextBlock Text="2" 
+                                   Foreground="White" 
+                                   FontSize="10" 
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center" 
+                                   VerticalAlignment="Center"/>
+                    </Border>
+                    
+                    <Button Content="Đăng xuất" 
+                            Background="Transparent" 
+                            Foreground="White" 
+                            BorderBrush="White" 
+                            BorderThickness="1"
+                            Padding="10,5"
+                            Margin="15,0,0,0"
+                            Click="Logout_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <!-- Main Content -->
+        <Grid Grid.Row="1" Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="300"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Left Sidebar - Menu -->
+            <Border Grid.Column="0" 
+                    Background="White" 
+                    CornerRadius="10" 
+                    Padding="20"
+                    Effect="{StaticResource CardShadow}"
+                    Margin="0,0,10,0">
+                <StackPanel>
+                    <TextBlock Text="Menu" 
+                               FontSize="18" 
+                               FontWeight="Bold" 
+                               Margin="0,0,0,20"/>
+                    
+                    <Button Content="📋 Đơn hàng của tôi" 
+                            Style="{StaticResource CustomerButton}"
+                            Height="40" 
+                            Margin="0,0,0,10"
+                            Click="MyOrders_Click"/>
+                    
+                    <Button Content="🛒 Đặt hàng mới" 
+                            Style="{StaticResource CustomerButton}"
+                            Height="40" 
+                            Margin="0,0,0,10"
+                            Click="PlaceOrder_Click"/>
+                    
+                    <Button Content="👤 Hồ sơ" 
+                            Style="{StaticResource CustomerButton}"
+                            Height="40" 
+                            Margin="0,0,0,10"
+                            Click="Profile_Click"/>
+                    
+                    <Button Content="🎁 Ưu đãi" 
+                            Style="{StaticResource CustomerButton}"
+                            Height="40" 
+                            Margin="0,0,0,10"
+                            Click="Rewards_Click"/>
+                    
+                    <Button Content="💬 Hỗ trợ" 
+                            Style="{StaticResource CustomerButton}"
+                            Height="40" 
+                            Margin="0,0,0,10"
+                            Click="Support_Click"/>
+                    
+                    <Separator Margin="0,20"/>
+                    
+                    <TextBlock Text="Thông tin nhanh" 
+                               FontSize="14" 
+                               FontWeight="SemiBold" 
+                               Margin="0,0,0,10"/>
+                    
+                    <StackPanel>
+                        <TextBlock Text="Đơn hàng đang xử lý: 2" 
+                                   FontSize="12" 
+                                   Foreground="#666666"/>
+                        <TextBlock Text="Điểm thưởng: 1,250" 
+                                   FontSize="12" 
+                                   Foreground="#666666"/>
+                        <TextBlock Text="Ưu đãi hiện tại: 5%" 
+                                   FontSize="12" 
+                                   Foreground="#4CAF50"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            
+            <!-- Main Panel -->
+            <ScrollViewer Grid.Column="1" 
+                          VerticalScrollBarVisibility="Auto" 
+                          Margin="10,0">
+                <StackPanel>
+                    <!-- Current Order Status -->
+                    <Border Background="White" 
+                            CornerRadius="10" 
+                            Padding="20" 
+                            Margin="0,0,0,20"
+                            Effect="{StaticResource CardShadow}">
+                        <StackPanel>
+                            <TextBlock Text="Trạng thái đơn hàng hiện tại" 
+                                       FontSize="18" 
+                                       FontWeight="Bold" 
+                                       Margin="0,0,0,15"/>
+                            
+                            <Border Background="#E8F5E8" 
+                                    Padding="15" 
+                                    CornerRadius="8">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="Đơn hàng #123" 
+                                                   FontSize="16" 
+                                                   FontWeight="Bold" 
+                                                   Foreground="#388E3C"/>
+                                        <TextBlock Text="Đã giao hàng - Dự kiến nhận: 05/08/2025" 
+                                                   FontSize="14" 
+                                                   Foreground="#666666" 
+                                                   Margin="0,5,0,0"/>
+                                        <TextBlock Text="Tổng tiền: 250,000 VNĐ" 
+                                                   FontSize="14" 
+                                                   FontWeight="SemiBold" 
+                                                   Foreground="#333333" 
+                                                   Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                    
+                                    <StackPanel Grid.Column="1" 
+                                                VerticalAlignment="Center">
+                                        <Button Content="Theo dõi" 
+                                                Style="{StaticResource CustomerButton}"
+                                                Height="30" 
+                                                Padding="10,5"
+                                                Click="TrackOrder_Click"/>
+                                        <Button Content="Tải hóa đơn" 
+                                                Background="Transparent" 
+                                                Foreground="#4CAF50" 
+                                                BorderBrush="#4CAF50" 
+                                                BorderThickness="1"
+                                                Height="30" 
+                                                Padding="10,5"
+                                                Margin="0,5,0,0"
+                                                Click="DownloadInvoice_Click"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                            
+                            <!-- Progress Bar -->
+                            <StackPanel Margin="0,15,0,0">
+                                <TextBlock Text="Tiến trình giao hàng" 
+                                           FontSize="14" 
+                                           FontWeight="SemiBold" 
+                                           Margin="0,0,0,10"/>
+                                
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <StackPanel Grid.Column="0" 
+                                                HorizontalAlignment="Center">
+                                        <Ellipse Width="30" 
+                                                 Height="30" 
+                                                 Fill="#4CAF50" 
+                                                 Margin="0,0,0,5"/>
+                                        <TextBlock Text="Đặt hàng" 
+                                                   FontSize="12" 
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                    
+                                    <StackPanel Grid.Column="1" 
+                                                HorizontalAlignment="Center">
+                                        <Ellipse Width="30" 
+                                                 Height="30" 
+                                                 Fill="#4CAF50" 
+                                                 Margin="0,0,0,5"/>
+                                        <TextBlock Text="Xử lý" 
+                                                   FontSize="12" 
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                    
+                                    <StackPanel Grid.Column="2" 
+                                                HorizontalAlignment="Center">
+                                        <Ellipse Width="30" 
+                                                 Height="30" 
+                                                 Fill="#4CAF50" 
+                                                 Margin="0,0,0,5"/>
+                                        <TextBlock Text="Giao hàng" 
+                                                   FontSize="12" 
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                    
+                                    <StackPanel Grid.Column="3" 
+                                                HorizontalAlignment="Center">
+                                        <Ellipse Width="30" 
+                                                 Height="30" 
+                                                 Fill="#E0E0E0" 
+                                                 Margin="0,0,0,5"/>
+                                        <TextBlock Text="Hoàn thành" 
+                                                   FontSize="12" 
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                    
+                    <!-- Order History -->
+                    <Border Background="White" 
+                            CornerRadius="10" 
+                            Padding="20" 
+                            Margin="0,0,0,20"
+                            Effect="{StaticResource CardShadow}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,15">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <TextBlock Text="Lịch sử đơn hàng" 
+                                           FontSize="18" 
+                                           FontWeight="Bold"/>
+                                
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <ComboBox x:Name="cmbOrderFilter" 
+                                              Width="120" 
+                                              Margin="0,0,10,0"
+                                              SelectionChanged="OrderFilter_Changed">
+                                        <ComboBoxItem Content="Tất cả"/>
+                                        <ComboBoxItem Content="Đang xử lý"/>
+                                        <ComboBoxItem Content="Đã giao"/>
+                                        <ComboBoxItem Content="Hoàn thành"/>
+                                    </ComboBox>
+                                    
+                                    <Button Content="Làm mới" 
+                                            Style="{StaticResource CustomerButton}"
+                                            Height="30" 
+                                            Padding="10,5"
+                                            Click="RefreshOrders_Click"/>
+                                </StackPanel>
+                            </Grid>
+                            
+                            <DataGrid x:Name="dgOrderHistory" 
+                                      AutoGenerateColumns="False" 
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      IsReadOnly="True"
+                                      GridLinesVisibility="Horizontal"
+                                      HeadersVisibility="Column"
+                                      RowHeaderWidth="0"
+                                      Height="200">
+                                
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Mã đơn" 
+                                                        Binding="{Binding OrderId}" 
+                                                        Width="80"/>
+                                    <DataGridTextColumn Header="Ngày đặt" 
+                                                        Binding="{Binding OrderDate, StringFormat=dd/MM/yyyy}" 
+                                                        Width="100"/>
+                                    <DataGridTextColumn Header="Tổng tiền" 
+                                                        Binding="{Binding TotalAmount, StringFormat={}{0:N0} VNĐ}" 
+                                                        Width="120"/>
+                                    <DataGridTextColumn Header="Trạng thái" 
+                                                        Binding="{Binding Status}" 
+                                                        Width="100"/>
+                                    <DataGridTemplateColumn Header="Hành động" Width="150">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Button Content="Chi tiết" 
+                                                            Style="{StaticResource CustomerButton}"
+                                                            Height="25" 
+                                                            Padding="5,2"
+                                                            Margin="0,0,5,0"
+                                                            Click="ViewOrderDetails_Click"/>
+                                                    <Button Content="Hủy" 
+                                                            Background="#FF4444" 
+                                                            Foreground="White"
+                                                            Height="25" 
+                                                            Padding="5,2"
+                                                            Click="CancelOrder_Click"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </Border>
+                    
+                    <!-- Quick Actions -->
+                    <Border Background="White" 
+                            CornerRadius="10" 
+                            Padding="20" 
+                            Margin="0,0,0,20"
+                            Effect="{StaticResource CardShadow}">
+                        <StackPanel>
+                            <TextBlock Text="Thao tác nhanh" 
+                                       FontSize="18" 
+                                       FontWeight="Bold" 
+                                       Margin="0,0,0,15"/>
+                            
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <Button Grid.Column="0" 
+                                        Content="🛒 Đặt hàng mới" 
+                                        Style="{StaticResource CustomerButton}"
+                                        Height="60" 
+                                        Margin="0,0,10,0"
+                                        Click="PlaceOrder_Click"/>
+                                
+                                <Button Grid.Column="1" 
+                                        Content="💬 Liên hệ hỗ trợ" 
+                                        Style="{StaticResource CustomerButton}"
+                                        Height="60" 
+                                        Margin="5,0"
+                                        Click="ContactSupport_Click"/>
+                                
+                                <Button Grid.Column="2" 
+                                        Content="📊 Xem báo cáo" 
+                                        Style="{StaticResource CustomerButton}"
+                                        Height="60" 
+                                        Margin="10,0,0,0"
+                                        Click="ViewReports_Click"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+            
+            <!-- Right Panel - Profile & Promotions -->
+            <Border Grid.Column="2" 
+                    Background="White" 
+                    CornerRadius="10" 
+                    Padding="20"
+                    Effect="{StaticResource CardShadow}"
+                    Margin="10,0,0,0">
+                <StackPanel>
+                    <TextBlock Text="Hồ sơ và Ưu đãi" 
+                               FontSize="18" 
+                               FontWeight="Bold" 
+                               Margin="0,0,0,20"/>
+                    
+                    <!-- Profile Summary -->
+                    <TextBlock Text="Thông tin cá nhân" 
+                               FontSize="14" 
+                               FontWeight="SemiBold" 
+                               Margin="0,0,0,10"/>
+                    
+                    <Border Background="#F5F5F5" 
+                            Padding="15" 
+                            CornerRadius="5" 
+                            Margin="0,0,0,20">
+                        <StackPanel>
+                            <TextBlock x:Name="txtProfileName" 
+                                       Text="Công ty Xây dựng Minh Anh" 
+                                       FontWeight="SemiBold"/>
+                            <TextBlock x:Name="txtProfileEmail" 
+                                       Text="minhanh@construction.com" 
+                                       FontSize="12" 
+                                       Foreground="#666666"/>
+                            <TextBlock x:Name="txtProfilePhone" 
+                                       Text="0987654321" 
+                                       FontSize="12" 
+                                       Foreground="#666666"/>
+                            <TextBlock x:Name="txtProfileAddress" 
+                                       Text="789 Đường Láng, Hà Nội" 
+                                       FontSize="12" 
+                                       Foreground="#666666"/>
+                            
+                            <Button Content="Chỉnh sửa hồ sơ" 
+                                    Style="{StaticResource CustomerButton}"
+                                    Height="30" 
+                                    Padding="10,5"
+                                    Margin="0,10,0,0"
+                                    Click="EditProfile_Click"/>
+                        </StackPanel>
+                    </Border>
+                    
+                    <!-- Promotions -->
+                    <TextBlock Text="Ưu đãi hiện tại" 
+                               FontSize="14" 
+                               FontWeight="SemiBold" 
+                               Margin="0,0,0,10"/>
+                    
+                    <ScrollViewer Height="200" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <Border Background="#E8F5E8" 
+                                    Padding="15" 
+                                    CornerRadius="5" 
+                                    Margin="0,0,0,10">
+                                <StackPanel>
+                                    <TextBlock Text="🎉 Giảm 10% cho đơn hàng đầu tiên" 
+                                               FontWeight="SemiBold" 
+                                               Foreground="#388E3C"/>
+                                    <TextBlock Text="Áp dụng cho tất cả sản phẩm nilon" 
+                                               FontSize="12" 
+                                               Foreground="#666666"/>
+                                    <TextBlock Text="Hết hạn: 31/12/2025" 
+                                               FontSize="10" 
+                                               Foreground="#999999"/>
+                                </StackPanel>
+                            </Border>
+                            
+                            <Border Background="#FFF3E0" 
+                                    Padding="15" 
+                                    CornerRadius="5" 
+                                    Margin="0,0,0,10">
+                                <StackPanel>
+                                    <TextBlock Text="🎁 Miễn phí vận chuyển" 
+                                               FontWeight="SemiBold" 
+                                               Foreground="#F57C00"/>
+                                    <TextBlock Text="Cho đơn hàng từ 500,000 VNĐ" 
+                                               FontSize="12" 
+                                               Foreground="#666666"/>
+                                    <TextBlock Text="Hết hạn: 15/08/2025" 
+                                               FontSize="10" 
+                                               Foreground="#999999"/>
+                                </StackPanel>
+                            </Border>
+                            
+                            <Border Background="#E3F2FD" 
+                                    Padding="15" 
+                                    CornerRadius="5">
+                                <StackPanel>
+                                    <TextBlock Text="⭐ Tích điểm thưởng" 
+                                               FontWeight="SemiBold" 
+                                               Foreground="#1976D2"/>
+                                    <TextBlock Text="1,250 điểm hiện có" 
+                                               FontSize="12" 
+                                               Foreground="#666666"/>
+                                    <TextBlock Text="Đổi 1,000 điểm = 50,000 VNĐ" 
+                                               FontSize="10" 
+                                               Foreground="#999999"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window> 

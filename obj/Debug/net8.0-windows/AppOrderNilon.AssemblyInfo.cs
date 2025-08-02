@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AppOrderNilon")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d079c7f9a9934c3b38f814ec32217e3beeb6a619")]
 [assembly: System.Reflection.AssemblyProductAttribute("AppOrderNilon")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AppOrderNilon")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

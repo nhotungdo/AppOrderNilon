@@ -29,7 +29,9 @@ GO
 
 -- Tạo bảng Customers
 CREATE TABLE Customers (
-    CustomerID INT PRIMARY KEY IDENTITY(1,1),
+   CustomerID INT PRIMARY KEY IDENTITY(1,1),
+    Username NVARCHAR(50) NOT NULL UNIQUE,
+    PasswordHash NVARCHAR(255) NOT NULL,
     CustomerName NVARCHAR(100) NOT NULL,
     Phone NVARCHAR(20),
     Email NVARCHAR(100),
@@ -84,6 +86,7 @@ CREATE TABLE Orders (
     TotalAmount DECIMAL(18,2) NOT NULL DEFAULT 0,
     Status NVARCHAR(50) NOT NULL, -- Pending, Completed, Canceled
     Notes NVARCHAR(500),
+	 CustomerName NVARCHAR(255) NULL,
     FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
     FOREIGN KEY (StaffID) REFERENCES Staff(StaffID)
 );
@@ -216,3 +219,4 @@ VALUES
     ('Revenue', '2025-01-01', '2025-12-31', '{"total": 5000000}', 1),
     ('Inventory', '2025-08-01', '2025-08-31', '{"stock": 350}', 2);
 GO
+

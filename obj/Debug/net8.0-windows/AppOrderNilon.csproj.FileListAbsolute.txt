@@ -155,9 +155,14 @@ F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\AppOrderNi
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\AppOrderNilon.AssemblyInfoInputs.cache
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\AppOrderNilon.AssemblyInfo.cs
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\AppOrderNilon.csproj.CoreCompileInputs.cache
+F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\AppOrderNilon.sourcelink.json
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\AppOrder.B46AADAB.Up2Date
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\AppOrderNilon.dll
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\refint\AppOrderNilon.dll
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\AppOrderNilon.pdb
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\AppOrderNilon.genruntimeconfig.cache
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\ref\AppOrderNilon.dll
+F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\CustomerDashboardWindow.baml
+F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\StaffDashboardWindow.baml
+F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\CustomerDashboardWindow.g.cs
+F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\StaffDashboardWindow.g.cs

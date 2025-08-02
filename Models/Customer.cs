@@ -7,7 +7,12 @@ public partial class Customer
 {
     public int CustomerId { get; set; }
 
+    public string Username { get; set; } = null!;
+
+    public string PasswordHash { get; set; } = null!;
+
     public string CustomerName { get; set; } = null!;
+
 
     public string? Phone { get; set; }
 
