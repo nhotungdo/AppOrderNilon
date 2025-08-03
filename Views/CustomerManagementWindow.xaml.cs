@@ -16,21 +16,21 @@ namespace AppOrderNilon.Views
         public CustomerManagementWindow()
         {
             InitializeComponent();
-            _customerService = new CustomerService();
+            _customerService = new CustomerService(new AppOrderNilonContext());
             LoadData();
         }
 
-        private void LoadData()
+        private async void LoadData()
         {
             try
             {
-                allCustomers = _customerService.GetAllCustomers();
+                allCustomers = await _customerService.GetAllCustomersAsync();
                 RefreshCustomerGrid();
                 UpdateStatusBar();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 // Fallback to sample data
                 LoadSampleData();
@@ -43,32 +43,32 @@ namespace AppOrderNilon.Views
         {
             allCustomers = new List<Customer>
             {
-                new Customer 
-                { 
-                    CustomerId = 1, 
-                    CustomerName = "Công ty Xây dựng Minh Anh", 
-                    Phone = "0987654321", 
-                    Email = "minhanh@construction.com", 
-                    Address = "789 Đường Láng, Hà Nội", 
-                    Notes = "Khách hàng VIP" 
+                new Customer
+                {
+                    CustomerId = 1,
+                    CustomerName = "Công ty Xây dựng Minh Anh",
+                    Phone = "0987654321",
+                    Email = "minhanh@construction.com",
+                    Address = "789 Đường Láng, Hà Nội",
+                    Notes = "Khách hàng VIP"
                 },
-                new Customer 
-                { 
-                    CustomerId = 2, 
-                    CustomerName = "Lê Văn C", 
-                    Phone = "0971234567", 
-                    Email = "levanc@gmail.com", 
-                    Address = "123 Đường Nguyễn Trãi, Hà Nội", 
-                    Notes = "" 
+                new Customer
+                {
+                    CustomerId = 2,
+                    CustomerName = "Lê Văn C",
+                    Phone = "0971234567",
+                    Email = "levanc@gmail.com",
+                    Address = "123 Đường Nguyễn Trãi, Hà Nội",
+                    Notes = ""
                 },
-                new Customer 
-                { 
-                    CustomerId = 3, 
-                    CustomerName = "Công ty Thương mại ABC", 
-                    Phone = "0968765432", 
-                    Email = "abc@company.com", 
-                    Address = "456 Đường Giải Phóng, Hà Nội", 
-                    Notes = "Khách hàng VIP" 
+                new Customer
+                {
+                    CustomerId = 3,
+                    CustomerName = "Công ty Thương mại ABC",
+                    Phone = "0968765432",
+                    Email = "abc@company.com",
+                    Address = "456 Đường Giải Phóng, Hà Nội",
+                    Notes = "Khách hàng VIP"
                 }
             };
         }
@@ -108,7 +108,7 @@ namespace AppOrderNilon.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi lọc dữ liệu: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi lọc dữ liệu: {ex.Message}", "Lỗi",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 dgCustomers.ItemsSource = allCustomers;
             }
@@ -154,27 +154,18 @@ namespace AppOrderNilon.Views
             var customerForm = new CustomerFormWindow();
             if (customerForm.ShowDialog() == true)
             {
-                var newCustomer = customerForm.Customer;
-                if (_customerService.CreateCustomer(newCustomer))
-                {
-                    MessageBox.Show("Thêm khách hàng thành công!", "Thông báo", 
-                        MessageBoxButton.OK, MessageBoxImage.Information);
-                    LoadData();
-                }
-                else
-                {
-                    MessageBox.Show("Lỗi khi thêm khách hàng!", "Lỗi", 
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                MessageBox.Show("Thêm khách hàng thành công!", "Thông báo",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                LoadData();
             }
         }
 
-        private void ViewCustomer_Click(object sender, RoutedEventArgs e)
+        private async void ViewCustomer_Click(object sender, RoutedEventArgs e)
         {
             if (dgCustomers.SelectedItem is Customer selectedCustomer)
             {
                 // Get full customer data with orders
-                var fullCustomer = _customerService.GetCustomerById(selectedCustomer.CustomerId);
+                var fullCustomer = await _customerService.GetCustomerByIdAsync(selectedCustomer.CustomerId);
                 if (fullCustomer != null)
                 {
                     CustomerDetailWindow customerDetailWindow = new CustomerDetailWindow(fullCustomer);
@@ -188,7 +179,7 @@ namespace AppOrderNilon.Views
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn khách hàng cần xem!", "Thông báo", 
+                MessageBox.Show("Vui lòng chọn khách hàng cần xem!", "Thông báo",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
@@ -200,65 +191,57 @@ namespace AppOrderNilon.Views
                 var customerForm = new CustomerFormWindow(selectedCustomer);
                 if (customerForm.ShowDialog() == true)
                 {
-                    var updatedCustomer = customerForm.Customer;
-                    if (_customerService.UpdateCustomer(updatedCustomer))
-                    {
-                        MessageBox.Show("Cập nhật khách hàng thành công!", "Thông báo", 
-                            MessageBoxButton.OK, MessageBoxImage.Information);
-                        LoadData();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Lỗi khi cập nhật khách hàng!", "Lỗi", 
-                            MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    MessageBox.Show("Cập nhật khách hàng thành công!", "Thông báo",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    LoadData();
                 }
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn khách hàng cần sửa!", "Thông báo", 
+                MessageBox.Show("Vui lòng chọn khách hàng cần sửa!", "Thông báo",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
-        private void DeleteCustomer_Click(object sender, RoutedEventArgs e)
+        private async void DeleteCustomer_Click(object sender, RoutedEventArgs e)
         {
             if (dgCustomers.SelectedItem is Customer selectedCustomer)
             {
-                var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa khách hàng '{selectedCustomer.CustomerName}'?", 
+                var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa khách hàng '{selectedCustomer.CustomerName}'?",
                     "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                
+
                 if (result == MessageBoxResult.Yes)
                 {
                     try
                     {
-                        if (_customerService.DeleteCustomer(selectedCustomer.CustomerId))
+                        var success = await _customerService.DeleteCustomerAsync(selectedCustomer.CustomerId);
+                        if (success)
                         {
-                            MessageBox.Show("Đã xóa khách hàng thành công!", "Thông báo", 
+                            MessageBox.Show("Đã xóa khách hàng thành công!", "Thông báo",
                                 MessageBoxButton.OK, MessageBoxImage.Information);
                             LoadData();
                         }
                         else
                         {
-                            MessageBox.Show("Lỗi khi xóa khách hàng!", "Lỗi", 
+                            MessageBox.Show("Lỗi khi xóa khách hàng!", "Lỗi",
                                 MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     }
                     catch (InvalidOperationException ex)
                     {
-                        MessageBox.Show($"Không thể xóa khách hàng: {ex.Message}", "Lỗi", 
+                        MessageBox.Show($"Không thể xóa khách hàng: {ex.Message}", "Lỗi",
                             MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Lỗi khi xóa khách hàng: {ex.Message}", "Lỗi", 
+                        MessageBox.Show($"Lỗi khi xóa khách hàng: {ex.Message}", "Lỗi",
                             MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn khách hàng cần xóa!", "Thông báo", 
+                MessageBox.Show("Vui lòng chọn khách hàng cần xóa!", "Thông báo",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
@@ -272,9 +255,9 @@ namespace AppOrderNilon.Views
 
         private void Logout_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận", 
+            var result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận",
                 MessageBoxButton.YesNo, MessageBoxImage.Question);
-            
+
             if (result == MessageBoxResult.Yes)
             {
                 LoginWindow loginWindow = new LoginWindow();
@@ -285,7 +268,6 @@ namespace AppOrderNilon.Views
 
         protected override void OnClosed(EventArgs e)
         {
-            _customerService?.Dispose();
             base.OnClosed(e);
         }
     }

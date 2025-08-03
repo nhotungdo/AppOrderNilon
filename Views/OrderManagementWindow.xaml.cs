@@ -22,19 +22,19 @@ namespace AppOrderNilon.Views
         {
             InitializeComponent();
             _orderService = new OrderService();
-            _customerService = new CustomerService();
+            _customerService = new CustomerService(new AppOrderNilonContext());
             _adminService = new AdminService();
             LoadData();
         }
 
-        private void LoadData()
+        private async void LoadData()
         {
             try
             {
                 // Load data from database
-                allOrders = _orderService.GetAllOrders();
-                customers = _customerService.GetAllCustomers();
-                staff = _adminService.GetAllStaff();
+                allOrders = await _orderService.GetAllOrdersAsync();
+                customers = await _customerService.GetAllCustomersAsync();
+                staff = await _adminService.GetAllStaffAsync();
 
                 RefreshOrderGrid();
                 UpdateStatusBar();

@@ -124,7 +124,7 @@ namespace AppOrderNilon.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/AppOrderNilon;V1.0.0.0;component/views/customerformwindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/AppOrderNilon;component/views/customerformwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Views\CustomerFormWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

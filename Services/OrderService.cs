@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AppOrderNilon.Models;
 
@@ -30,6 +31,18 @@ namespace AppOrderNilon.Services
                 .ThenInclude(od => od.Product)
                 .OrderByDescending(o => o.OrderDate)
                 .ToList();
+        }
+
+        // Get all orders async
+        public async Task<List<Order>> GetAllOrdersAsync()
+        {
+            return await _context.Orders
+                .Include(o => o.Customer)
+                .Include(o => o.Staff)
+                .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Product)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
         }
 
         // Get order by ID

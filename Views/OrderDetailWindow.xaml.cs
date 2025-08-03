@@ -32,9 +32,9 @@ namespace AppOrderNilon.Views
             this.staff = staff;
             this.isEditMode = order != null;
 
-            _orderService = new OrderService();
-            _productService = new ProductService();
-            _customerService = new CustomerService();
+            _orderService = new OrderService(new AppOrderNilonContext());
+            _productService = new ProductService(new AppOrderNilonContext());
+            _customerService = new CustomerService(new AppOrderNilonContext());
 
             orderDetails = new List<OrderDetail>();
 
@@ -97,7 +97,7 @@ namespace AppOrderNilon.Views
                 cmbStaff.ItemsSource = staff;
 
                 // Load products
-                products = _productService.GetAllProducts() ?? new List<Product>();
+                products = _productService.GetAllProductsAsync().Result ?? new List<Product>();
 
                 // If no products from database, create sample products
                 if (products.Count == 0)

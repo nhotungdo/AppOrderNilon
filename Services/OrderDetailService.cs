@@ -63,7 +63,10 @@ namespace AppOrderNilon.Services
                 await _context.SaveChangesAsync();
 
                 // Cập nhật TotalAmount của Order
-                await UpdateOrderTotalAmountAsync(orderDetail.OrderId);
+                if (orderDetail.OrderId.HasValue)
+                {
+                    await UpdateOrderTotalAmountAsync(orderDetail.OrderId.Value);
+                }
 
                 return true;
             }
@@ -104,7 +107,10 @@ namespace AppOrderNilon.Services
                 await _context.SaveChangesAsync();
 
                 // Cập nhật TotalAmount của Order
-                await UpdateOrderTotalAmountAsync(existingOrderDetail.OrderId);
+                if (existingOrderDetail.OrderId.HasValue)
+                {
+                    await UpdateOrderTotalAmountAsync(existingOrderDetail.OrderId.Value);
+                }
 
                 return true;
             }
@@ -131,7 +137,10 @@ namespace AppOrderNilon.Services
                 await _context.SaveChangesAsync();
 
                 // Cập nhật TotalAmount của Order
-                await UpdateOrderTotalAmountAsync(orderId);
+                if (orderId.HasValue)
+                {
+                    await UpdateOrderTotalAmountAsync(orderId.Value);
+                }
 
                 return true;
             }
@@ -212,9 +221,10 @@ namespace AppOrderNilon.Services
         // Lấy thống kê sản phẩm bán chạy
         public async Task<List<object>> GetBestSellingProductsAsync(int top = 10)
         {
-            return await _context.OrderDetails
+            var result = await _context.OrderDetails
                 .Include(od => od.Product)
-                .GroupBy(od => new { od.ProductId, od.Product.ProductName })
+                .Where(od => od.Product != null)
+                .GroupBy(od => new { od.ProductId, od.Product!.ProductName })
                 .Select(g => new
                 {
                     ProductId = g.Key.ProductId,
@@ -225,6 +235,8 @@ namespace AppOrderNilon.Services
                 .OrderByDescending(x => x.TotalQuantity)
                 .Take(top)
                 .ToListAsync();
+
+            return result.Cast<object>().ToList();
         }
     }
 }

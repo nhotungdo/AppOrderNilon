@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using AppOrderNilon.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -184,25 +185,25 @@ namespace AppOrderNilon.Services
             {
                 var endDate = DateTime.Now;
                 var startDate = endDate.AddMonths(-months + 1);
-                
+
                 var monthlyData = new List<MonthlyRevenue>();
-                
+
                 for (int i = 0; i < months; i++)
                 {
                     var monthStart = startDate.AddMonths(i);
                     var monthEnd = monthStart.AddMonths(1).AddDays(-1);
-                    
+
                     var revenue = _context.Orders
                         .Where(o => o.OrderDate >= monthStart && o.OrderDate <= monthEnd)
                         .Sum(o => o.TotalAmount);
-                    
+
                     monthlyData.Add(new MonthlyRevenue
                     {
                         Month = monthStart.ToString("MMM yyyy"),
                         Revenue = revenue
                     });
                 }
-                
+
                 return monthlyData;
             }
             catch
@@ -265,7 +266,7 @@ namespace AppOrderNilon.Services
                 if (existingAdmin == null) return false;
 
                 // Check if username is being changed and if it's already taken
-                if (admin.Username != existingAdmin.Username && 
+                if (admin.Username != existingAdmin.Username &&
                     _context.Admins.Any(a => a.Username == admin.Username))
                 {
                     return false;
@@ -327,6 +328,20 @@ namespace AppOrderNilon.Services
             }
         }
 
+        public async Task<List<Staff>> GetAllStaffAsync()
+        {
+            try
+            {
+                return await _context.Staff
+                    .OrderBy(s => s.FullName)
+                    .ToListAsync();
+            }
+            catch
+            {
+                return new List<Staff>();
+            }
+        }
+
         public Staff GetStaffById(int staffId)
         {
             try
@@ -368,7 +383,7 @@ namespace AppOrderNilon.Services
                 if (existingStaff == null) return false;
 
                 // Check if username is being changed and if it's already taken
-                if (staff.Username != existingStaff.Username && 
+                if (staff.Username != existingStaff.Username &&
                     _context.Staff.Any(s => s.Username == staff.Username))
                 {
                     return false;

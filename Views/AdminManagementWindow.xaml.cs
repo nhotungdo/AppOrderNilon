@@ -274,18 +274,9 @@ namespace AppOrderNilon.Views
                 var staffForm = new StaffFormWindow();
                 if (staffForm.ShowDialog() == true)
                 {
-                    var newStaff = staffForm.Staff;
-                    if (_adminService.CreateStaff(newStaff))
-                    {
-                        MessageBox.Show("Thêm staff thành công!", "Thông báo", 
-                            MessageBoxButton.OK, MessageBoxImage.Information);
-                        LoadStaff();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Lỗi khi thêm staff! Có thể tên đăng nhập đã tồn tại.", "Lỗi", 
-                            MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    MessageBox.Show("Thêm staff thành công!", "Thông báo", 
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    LoadStaff();
                 }
             }
             catch (Exception ex)
@@ -304,18 +295,9 @@ namespace AppOrderNilon.Views
                 var staffForm = new StaffFormWindow(_selectedStaff);
                 if (staffForm.ShowDialog() == true)
                 {
-                    var updatedStaff = staffForm.Staff;
-                    if (_adminService.UpdateStaff(updatedStaff))
-                    {
-                        MessageBox.Show("Cập nhật staff thành công!", "Thông báo", 
-                            MessageBoxButton.OK, MessageBoxImage.Information);
-                        LoadStaff();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Lỗi khi cập nhật staff! Có thể tên đăng nhập đã tồn tại.", "Lỗi", 
-                            MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    MessageBox.Show("Cập nhật staff thành công!", "Thông báo", 
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    LoadStaff();
                 }
             }
             catch (Exception ex)

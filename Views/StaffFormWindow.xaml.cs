@@ -47,11 +47,11 @@ namespace AppOrderNilon.Views
             txtFullName.Text = _staff?.FullName ?? "";
             txtEmail.Text = _staff?.Email ?? "";
             txtPhone.Text = _staff?.Phone ?? "";
-            
+
             // Disable username field in edit mode
             txtUsername.IsEnabled = false;
             txtPassword.IsEnabled = false;
-            
+
             gridChangePassword.Visibility = Visibility.Visible;
             gridNewPassword.Visibility = Visibility.Collapsed;
         }
@@ -168,5 +168,4 @@ namespace AppOrderNilon.Views
             base.OnClosed(e);
         }
     }
-} 
-} 
+}

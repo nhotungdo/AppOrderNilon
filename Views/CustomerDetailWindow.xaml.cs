@@ -17,8 +17,8 @@ namespace AppOrderNilon.Views
         {
             InitializeComponent();
             _customer = customer;
-            _customerService = new CustomerService();
-            
+            _customerService = new CustomerService(new AppOrderNilonContext());
+
             if (_customer != null)
             {
                 LoadCustomerData();
@@ -33,7 +33,7 @@ namespace AppOrderNilon.Views
             txtEmail.Text = _customer.Email ?? "";
             txtAddress.Text = _customer.Address ?? "";
             txtNotes.Text = _customer.Notes ?? "";
-            
+
             txtTitle.Text = $"Chi tiết Khách hàng: {_customer.CustomerName}";
         }
 
@@ -43,10 +43,10 @@ namespace AppOrderNilon.Views
             {
                 _customerOrders = _customerService.GetCustomerOrderHistory(_customer.CustomerId);
                 dgOrders.ItemsSource = _customerOrders;
-                
+
                 // Update order summary
                 txtOrderSummary.Text = $"Tổng cộng: {_customerOrders.Count} đơn hàng";
-                
+
                 // Calculate total value
                 decimal totalValue = _customerOrders.Sum(o => o.TotalAmount);
                 if (totalValue > 0)
@@ -56,7 +56,7 @@ namespace AppOrderNilon.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải lịch sử đơn hàng: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi tải lịch sử đơn hàng: {ex.Message}", "Lỗi",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 _customerOrders = new List<Order>();
                 dgOrders.ItemsSource = _customerOrders;
@@ -71,21 +71,21 @@ namespace AppOrderNilon.Views
                 try
                 {
                     // Get customers and staff for OrderDetailWindow
-                    var customers = _customerService.GetAllCustomers();
+                    var customers = _customerService.GetAllCustomersAsync().Result;
                     var staff = new List<Staff>(); // TODO: Get staff from service
-                    
+
                     var orderDetailWindow = new OrderDetailWindow(selectedOrder, customers, staff);
                     orderDetailWindow.ShowDialog();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Lỗi khi mở chi tiết đơn hàng: {ex.Message}", "Lỗi", 
+                    MessageBox.Show($"Lỗi khi mở chi tiết đơn hàng: {ex.Message}", "Lỗi",
                         MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn đơn hàng cần xem chi tiết!", "Thông báo", 
+                MessageBox.Show("Vui lòng chọn đơn hàng cần xem chi tiết!", "Thông báo",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
@@ -97,8 +97,7 @@ namespace AppOrderNilon.Views
 
         protected override void OnClosed(EventArgs e)
         {
-            _customerService?.Dispose();
             base.OnClosed(e);
         }
     }
-} 
+}
