@@ -82,6 +82,7 @@ CREATE TABLE Orders (
     OrderID INT PRIMARY KEY IDENTITY(1,1),
     CustomerID INT,
     StaffID INT,
+	ProductName NVARCHAR(100) NOT NULL,
     OrderDate DATETIME NOT NULL DEFAULT GETDATE(),
     TotalAmount DECIMAL(18,2) NOT NULL DEFAULT 0,
     Status NVARCHAR(50) NOT NULL, -- Pending, Completed, Canceled
@@ -97,6 +98,7 @@ CREATE TABLE OrderDetails (
     OrderDetailID INT PRIMARY KEY IDENTITY(1,1),
     OrderID INT,
     ProductID INT,
+	ProductName NVARCHAR(100) NOT NULL,
     Quantity INT NOT NULL,
     UnitPrice DECIMAL(18,2) NOT NULL,
     Subtotal DECIMAL(18,2) NOT NULL,
@@ -160,10 +162,12 @@ VALUES
 GO
 
 -- Chèn dữ liệu mẫu vào bảng Customers
-INSERT INTO Customers (CustomerName, Phone, Email, Address, Notes)
+INSERT INTO Customers (CustomerName, Phone, Email, Address, Notes,Username,PasswordHash)
 VALUES 
-    (N'Công ty Xây dựng Minh Anh', '0987654321', 'minhanh@construction.com', N'789 Đường Láng, Hà Nội', N'Khách hàng VIP'),
-    (N'Cá nhân Lê Văn C', '0971234567', 'levanc@gmail.com', N'123 Đường Nguyễn Trãi, Hà Nội', '');
+
+	(N'Công ty Sản xuất nilon và các đồ bảo hộ', '0931982568', 'nhotungdo89@gmail.com', N'122 Hưng Yên', N'Khách hàng VIP', 'nhotung', '123456'),
+	(N'Công ty Xây dựng Minh Anh', '0987654321', 'minhanh@construction.com', N'789 Đường Láng, Hà Nội', N'Khách hàng VIP', 'customer1', '123456'),
+    (N'Cá nhân Lê Văn C', '0971234567', 'levanc@gmail.com', N'123 Đường Nguyễn Trãi, Hà Nội', '', 'customer2', '123456');
 GO
 
 -- Chèn dữ liệu mẫu vào bảng Categories
@@ -219,4 +223,6 @@ VALUES
     ('Revenue', '2025-01-01', '2025-12-31', '{"total": 5000000}', 1),
     ('Inventory', '2025-08-01', '2025-08-31', '{"stock": 350}', 2);
 GO
+
+
 

@@ -1,127 +1,104 @@
 using System;
-using System.Text.RegularExpressions;
+using System.Collections.Generic;
+using System.Linq; // Added for .Sum()
 using System.Windows;
 using AppOrderNilon.Models;
+using AppOrderNilon.Services;
 
 namespace AppOrderNilon.Views
 {
     public partial class CustomerDetailWindow : Window
     {
-        private Customer currentCustomer;
-        private bool isEditMode;
+        private Customer _customer;
+        private CustomerService _customerService;
+        private List<Order> _customerOrders;
 
         public CustomerDetailWindow(Customer customer)
         {
             InitializeComponent();
-            this.currentCustomer = customer;
-            this.isEditMode = customer != null;
+            _customer = customer;
+            _customerService = new CustomerService();
             
-            LoadCustomerData();
+            if (_customer != null)
+            {
+                LoadCustomerData();
+                LoadOrderHistory();
+            }
         }
 
         private void LoadCustomerData()
         {
-            if (isEditMode && currentCustomer != null)
-            {
-                txtHeader.Text = "Sửa thông tin khách hàng";
-                txtCustomerName.Text = currentCustomer.CustomerName;
-                txtPhone.Text = currentCustomer.Phone;
-                txtEmail.Text = currentCustomer.Email;
-                txtAddress.Text = currentCustomer.Address;
-                txtNotes.Text = currentCustomer.Notes;
-            }
-            else
-            {
-                txtHeader.Text = "Thêm khách hàng mới";
-            }
+            txtCustomerName.Text = _customer.CustomerName ?? "";
+            txtPhone.Text = _customer.Phone ?? "";
+            txtEmail.Text = _customer.Email ?? "";
+            txtAddress.Text = _customer.Address ?? "";
+            txtNotes.Text = _customer.Notes ?? "";
+            
+            txtTitle.Text = $"Chi tiết Khách hàng: {_customer.CustomerName}";
         }
 
-        private void Save_Click(object sender, RoutedEventArgs e)
+        private void LoadOrderHistory()
         {
-            if (!ValidateInputs())
-                return;
-
             try
             {
-                if (isEditMode)
+                _customerOrders = _customerService.GetCustomerOrderHistory(_customer.CustomerId);
+                dgOrders.ItemsSource = _customerOrders;
+                
+                // Update order summary
+                txtOrderSummary.Text = $"Tổng cộng: {_customerOrders.Count} đơn hàng";
+                
+                // Calculate total value
+                decimal totalValue = _customerOrders.Sum(o => o.TotalAmount);
+                if (totalValue > 0)
                 {
-                    // Update existing customer
-                    UpdateCustomer();
+                    txtOrderSummary.Text += $" - Tổng giá trị: ₫{totalValue:N0}";
                 }
-                else
-                {
-                    // Create new customer
-                    CreateCustomer();
-                }
-
-                this.DialogResult = true;
-                this.Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi lưu khách hàng: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi tải lịch sử đơn hàng: {ex.Message}", "Lỗi", 
                     MessageBoxButton.OK, MessageBoxImage.Error);
+                _customerOrders = new List<Order>();
+                dgOrders.ItemsSource = _customerOrders;
+                txtOrderSummary.Text = "Tổng cộng: 0 đơn hàng";
             }
         }
 
-        private void CreateCustomer()
+        private void ViewOrderDetails_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Save to database
-            MessageBox.Show("Khách hàng đã được tạo thành công!", "Thông báo", 
-                MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
-        private void UpdateCustomer()
-        {
-            // TODO: Update in database
-            MessageBox.Show("Khách hàng đã được cập nhật thành công!", "Thông báo", 
-                MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
-        private bool ValidateInputs()
-        {
-            // Validate customer name
-            if (string.IsNullOrWhiteSpace(txtCustomerName.Text))
+            if (dgOrders.SelectedItem is Order selectedOrder)
             {
-                MessageBox.Show("Vui lòng nhập tên khách hàng!", "Lỗi", 
+                try
+                {
+                    // Get customers and staff for OrderDetailWindow
+                    var customers = _customerService.GetAllCustomers();
+                    var staff = new List<Staff>(); // TODO: Get staff from service
+                    
+                    var orderDetailWindow = new OrderDetailWindow(selectedOrder, customers, staff);
+                    orderDetailWindow.ShowDialog();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi mở chi tiết đơn hàng: {ex.Message}", "Lỗi", 
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn đơn hàng cần xem chi tiết!", "Thông báo", 
                     MessageBoxButton.OK, MessageBoxImage.Warning);
-                txtCustomerName.Focus();
-                return false;
             }
-
-            // Validate phone number
-            if (!string.IsNullOrWhiteSpace(txtPhone.Text))
-            {
-                string phonePattern = @"^[0-9]{10,11}$";
-                if (!Regex.IsMatch(txtPhone.Text, phonePattern))
-                {
-                    MessageBox.Show("Số điện thoại không đúng định dạng!", "Lỗi", 
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
-                    txtPhone.Focus();
-                    return false;
-                }
-            }
-
-            // Validate email
-            if (!string.IsNullOrWhiteSpace(txtEmail.Text))
-            {
-                string emailPattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
-                if (!Regex.IsMatch(txtEmail.Text, emailPattern))
-                {
-                    MessageBox.Show("Email không đúng định dạng!", "Lỗi", 
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
-                    txtEmail.Focus();
-                    return false;
-                }
-            }
-
-            return true;
         }
 
-        private void Cancel_Click(object sender, RoutedEventArgs e)
+        private void Close_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = false;
             this.Close();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            _customerService?.Dispose();
+            base.OnClosed(e);
         }
     }
 } 

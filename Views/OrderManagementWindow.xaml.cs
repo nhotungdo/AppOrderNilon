@@ -4,32 +4,59 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using AppOrderNilon.Models;
+using AppOrderNilon.Services;
 
 namespace AppOrderNilon.Views
 {
     public partial class OrderManagementWindow : Window
     {
-        private List<Order> allOrders;
-        private List<Customer> customers;
-        private List<Staff> staff;
+        private List<Order> allOrders = new();
+        private List<Customer> customers = new();
+        private List<Staff> staff = new();
+
+        private OrderService _orderService;
+        private CustomerService _customerService;
+        private AdminService _adminService;
 
         public OrderManagementWindow()
         {
             InitializeComponent();
+            _orderService = new OrderService();
+            _customerService = new CustomerService();
+            _adminService = new AdminService();
             LoadData();
         }
 
         private void LoadData()
         {
-            // TODO: Load data from database
-            // For now, using sample data
-            LoadSampleData();
-            RefreshOrderGrid();
-            UpdateStatusBar();
+            try
+            {
+                // Load data from database
+                allOrders = _orderService.GetAllOrders();
+                customers = _customerService.GetAllCustomers();
+                staff = _adminService.GetAllStaff();
+
+                RefreshOrderGrid();
+                UpdateStatusBar();
+            }
+            catch (Exception ex)
+            {
+                // Fallback to sample data if database is not available
+                LoadSampleData();
+                RefreshOrderGrid();
+                UpdateStatusBar();
+
+                // Log error but don't show popup to user
+                System.Diagnostics.Debug.WriteLine($"Database connection failed in OrderManagement: {ex.Message}");
+            }
         }
 
         private void LoadSampleData()
         {
+            // Load sample customers and staff first
+            LoadCustomers();
+            LoadStaff();
+
             allOrders = new List<Order>
             {
                 new Order
@@ -40,7 +67,9 @@ namespace AppOrderNilon.Views
                     OrderDate = new DateTime(2025, 8, 1),
                     TotalAmount = 250000,
                     Status = "Completed",
-                    Notes = "Giao hàng nhanh"
+                    Notes = "Giao hàng nhanh",
+                    Customer = customers[0],
+                    Staff = staff[0]
                 },
                 new Order
                 {
@@ -50,18 +79,11 @@ namespace AppOrderNilon.Views
                     OrderDate = new DateTime(2025, 8, 2),
                     TotalAmount = 180000,
                     Status = "Pending",
-                    Notes = ""
+                    Notes = "",
+                    Customer = customers[1],
+                    Staff = staff[1]
                 }
             };
-
-            // Set navigation properties
-            LoadCustomers();
-            LoadStaff();
-
-            allOrders[0].Customer = customers[0];
-            allOrders[0].Staff = staff[0];
-            allOrders[1].Customer = customers[1];
-            allOrders[1].Staff = staff[1];
         }
 
         private void LoadCustomers()
@@ -91,8 +113,8 @@ namespace AppOrderNilon.Views
             {
                 string searchTerm = txtSearch.Text.ToLower();
                 filteredOrders = filteredOrders.Where(o =>
-                    o.CustomerName.ToLower().Contains(searchTerm) ||
-                    o.Notes?.ToLower().Contains(searchTerm) == true);
+                    (o.Customer?.CustomerName?.ToLower().Contains(searchTerm) == true) ||
+                    (o.Notes?.ToLower().Contains(searchTerm) == true));
             }
 
             // Apply status filter
@@ -124,12 +146,20 @@ namespace AppOrderNilon.Views
 
         private void UpdateStatusBar()
         {
-            txtTotalOrders.Text = allOrders.Count.ToString();
-            int pendingCount = allOrders.Count(o => o.Status == "Pending");
-            txtPendingOrders.Text = pendingCount.ToString();
-
-            decimal totalRevenue = allOrders.Where(o => o.Status == "Completed").Sum(o => o.TotalAmount);
-            txtTotalRevenue.Text = $"₫{totalRevenue:N0}";
+            try
+            {
+                var stats = _orderService.GetOrderStatistics();
+                txtTotalOrders.Text = $"Tổng số đơn hàng: {stats.TotalOrders}";
+                txtPendingOrders.Text = $"Đơn hàng chờ xử lý: {stats.PendingOrders}";
+                txtTotalRevenue.Text = $"Tổng doanh thu: ₫{stats.TotalRevenue:N0}";
+            }
+            catch
+            {
+                // Fallback to local calculation
+                txtTotalOrders.Text = $"Tổng số đơn hàng: {allOrders.Count}";
+                txtPendingOrders.Text = $"Đơn hàng chờ xử lý: {allOrders.Count(o => o.Status == "Pending")}";
+                txtTotalRevenue.Text = $"Tổng doanh thu: ₫{allOrders.Sum(o => o.TotalAmount):N0}";
+            }
         }
 
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
@@ -154,11 +184,37 @@ namespace AppOrderNilon.Views
 
         private void AddOrder_Click(object sender, RoutedEventArgs e)
         {
-            OrderDetailWindow orderDetailWindow = new OrderDetailWindow(null, customers, staff);
-            if (orderDetailWindow.ShowDialog() == true)
+            try
             {
-                // TODO: Add new order to database
-                LoadData(); // Reload data
+                OrderDetailWindow orderDetailWindow = new OrderDetailWindow(null, customers, staff);
+                if (orderDetailWindow.ShowDialog() == true)
+                {
+                    // Get the created order
+                    var createdOrder = orderDetailWindow.CreatedOrder;
+                    if (createdOrder != null)
+                    {
+                        // Add the new order to the list
+                        allOrders.Insert(0, createdOrder); // Insert at the beginning
+
+                        // Refresh the grid and status bar
+                        RefreshOrderGrid();
+                        UpdateStatusBar();
+
+                        // Show success message
+                        MessageBox.Show($"Đơn hàng #{createdOrder.OrderId} đã được thêm vào danh sách!", "Thông báo",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        // If no order was created, reload data from database
+                        LoadData();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tạo đơn hàng: {ex.Message}", "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -180,11 +236,41 @@ namespace AppOrderNilon.Views
         {
             if (dgOrders.SelectedItem is Order selectedOrder)
             {
-                OrderDetailWindow orderDetailWindow = new OrderDetailWindow(selectedOrder, customers, staff);
-                if (orderDetailWindow.ShowDialog() == true)
+                try
                 {
-                    // TODO: Update order in database
-                    LoadData(); // Reload data
+                    OrderDetailWindow orderDetailWindow = new OrderDetailWindow(selectedOrder, customers, staff);
+                    if (orderDetailWindow.ShowDialog() == true)
+                    {
+                        // Get the updated order
+                        var updatedOrder = orderDetailWindow.CreatedOrder;
+                        if (updatedOrder != null)
+                        {
+                            // Update the order in the list
+                            var index = allOrders.FindIndex(o => o.OrderId == selectedOrder.OrderId);
+                            if (index >= 0)
+                            {
+                                allOrders[index] = updatedOrder;
+                            }
+
+                            // Refresh the grid and status bar
+                            RefreshOrderGrid();
+                            UpdateStatusBar();
+
+                            // Show success message
+                            MessageBox.Show($"Đơn hàng #{updatedOrder.OrderId} đã được cập nhật!", "Thông báo",
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                        else
+                        {
+                            // If no order was updated, reload data from database
+                            LoadData();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi cập nhật đơn hàng: {ex.Message}", "Lỗi",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             else
@@ -203,12 +289,28 @@ namespace AppOrderNilon.Views
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    // TODO: Delete order from database
-                    allOrders.Remove(selectedOrder);
-                    RefreshOrderGrid();
-                    UpdateStatusBar();
-                    MessageBox.Show("Đã xóa đơn hàng thành công!", "Thông báo",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    try
+                    {
+                        bool success = _orderService.DeleteOrder(selectedOrder.OrderId);
+                        if (success)
+                        {
+                            allOrders.Remove(selectedOrder);
+                            RefreshOrderGrid();
+                            UpdateStatusBar();
+                            MessageBox.Show("Đã xóa đơn hàng thành công!", "Thông báo",
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Không thể xóa đơn hàng!", "Lỗi",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Lỗi khi xóa đơn hàng: {ex.Message}", "Lỗi",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
             else

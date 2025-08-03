@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AppOrderNilon.Models;
 
@@ -9,6 +10,7 @@ public partial class Order
 
     public int? CustomerId { get; set; }
 
+
     public int? StaffId { get; set; }
 
     public DateTime OrderDate { get; set; }
@@ -16,7 +18,6 @@ public partial class Order
     public decimal TotalAmount { get; set; }
 
     public string Status { get; set; } = null!;
-    public string CustomerName { get; set; } = null!;
 
 
     public string? Notes { get; set; }
@@ -27,7 +28,10 @@ public partial class Order
 
     public virtual Staff? Staff { get; set; }
 
-    // Navigation properties for display
-
+    // Navigation properties for display - Not mapped to database
+    [NotMapped]
     public string StaffName => Staff?.FullName ?? "Unknown";
+
+    [NotMapped]
+    public string CustomerName => Customer?.CustomerName ?? "Unknown";
 }

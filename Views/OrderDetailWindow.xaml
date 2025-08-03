@@ -29,6 +29,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 
@@ -57,19 +58,29 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Mã ĐH:" FontWeight="SemiBold"/>
-                                <TextBlock Grid.Row="0" Grid.Column="1" x:Name="txtOrderID" Text="1" Margin="10,0,0,0"/>
+                                <TextBlock Grid.Row="0" Grid.Column="1" x:Name="txtOrderID" Text="Tự động" Margin="10,0,0,0"/>
                                 
                                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Ngày đặt:" FontWeight="SemiBold"/>
-                                <TextBlock Grid.Row="1" Grid.Column="1" x:Name="txtOrderDate" Text="01/08/2025" Margin="10,0,0,0"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1" x:Name="txtOrderDate" Text="" Margin="10,0,0,0"/>
                                 
                                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Trạng thái:" FontWeight="SemiBold"/>
-                                <TextBlock Grid.Row="2" Grid.Column="1" x:Name="txtStatus" Text="Đã hoàn thành" Margin="10,0,0,0"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1" x:Name="txtStatus" Text="Chờ xử lý" Margin="10,0,0,0"/>
                                 
-                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Nhân viên:" FontWeight="SemiBold"/>
-                                <TextBlock Grid.Row="3" Grid.Column="1" x:Name="txtStaffName" Text="Trần Nhân Viên" Margin="10,0,0,0"/>
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Khách hàng:" FontWeight="SemiBold"/>
+                                <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cmbCustomer" 
+                                          Margin="10,0,0,0" 
+                                          DisplayMemberPath="CustomerName"
+                                          SelectionChanged="Customer_SelectionChanged"/>
+                                
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Nhân viên:" FontWeight="SemiBold"/>
+                                <ComboBox Grid.Row="4" Grid.Column="1" x:Name="cmbStaff" 
+                                          Margin="10,0,0,0" 
+                                          DisplayMemberPath="FullName"
+                                          SelectionChanged="Staff_SelectionChanged"/>
                             </Grid>
                         </StackPanel>
                         
@@ -93,23 +104,65 @@
                                 </Grid.RowDefinitions>
                                 
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Tên KH:" FontWeight="SemiBold"/>
-                                <TextBlock Grid.Row="0" Grid.Column="1" x:Name="txtCustomerName" Text="Công ty Xây dựng Minh Anh" Margin="10,0,0,0"/>
+                                <TextBlock Grid.Row="0" Grid.Column="1" x:Name="txtCustomerName" Text="" Margin="10,0,0,0"/>
                                 
                                 <TextBlock Grid.Row="1" Grid.Column="0" Text="SĐT:" FontWeight="SemiBold"/>
-                                <TextBlock Grid.Row="1" Grid.Column="1" x:Name="txtCustomerPhone" Text="0987654321" Margin="10,0,0,0"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1" x:Name="txtCustomerPhone" Text="" Margin="10,0,0,0"/>
                                 
                                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Email:" FontWeight="SemiBold"/>
-                                <TextBlock Grid.Row="2" Grid.Column="1" x:Name="txtCustomerEmail" Text="minhanh@construction.com" Margin="10,0,0,0"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1" x:Name="txtCustomerEmail" Text="" Margin="10,0,0,0"/>
                                 
                                 <TextBlock Grid.Row="3" Grid.Column="0" Text="Địa chỉ:" FontWeight="SemiBold"/>
-                                <TextBlock Grid.Row="3" Grid.Column="1" x:Name="txtCustomerAddress" Text="789 Đường Láng, Hà Nội" Margin="10,0,0,0"/>
+                                <TextBlock Grid.Row="3" Grid.Column="1" x:Name="txtCustomerAddress" Text="" Margin="10,0,0,0"/>
                             </Grid>
                         </StackPanel>
                     </Grid>
                 </Border>
                 
-                <!-- Order Details -->
+                <!-- Product Selection -->
                 <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="20" Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Thêm sản phẩm" 
+                                   FontSize="16" 
+                                   FontWeight="Bold" 
+                                   Margin="0,0,0,15"/>
+                        
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <ComboBox Grid.Column="0" x:Name="cmbProduct" 
+                                      DisplayMemberPath="ProductName"
+                                      Margin="0,0,10,0"
+                                      SelectionChanged="Product_SelectionChanged"/>
+                            
+                            <TextBox Grid.Column="1" x:Name="txtQuantity" 
+                                     Text="1" 
+                                     Margin="0,0,10,0"
+                                     TextAlignment="Center"/>
+                            
+                            <TextBlock Grid.Column="2" x:Name="txtUnitPrice" 
+                                       Text="₫0" 
+                                       VerticalAlignment="Center"
+                                       FontWeight="SemiBold"/>
+                            
+                            <Button Grid.Column="3" x:Name="btnAddProduct" 
+                                    Content="Thêm" 
+                                    Width="80" 
+                                    Height="30" 
+                                    Background="#4CAF50" 
+                                    Foreground="White"
+                                    Click="AddProduct_Click"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                
+                <!-- Order Details -->
+                <Border Grid.Row="2" Background="White" CornerRadius="10" Padding="20" Margin="0,0,0,20">
                     <StackPanel>
                         <TextBlock Text="Chi tiết sản phẩm" 
                                    FontSize="16" 
@@ -119,36 +172,41 @@
                         <DataGrid x:Name="dgOrderDetails" 
                                   AutoGenerateColumns="False" 
                                   CanUserAddRows="False"
-                                  CanUserDeleteRows="False"
-                                  IsReadOnly="True"
+                                  CanUserDeleteRows="True"
+                                  IsReadOnly="False"
                                   GridLinesVisibility="Horizontal"
                                   HeadersVisibility="Column"
                                   RowHeaderWidth="0"
-                                  Height="200">
+                                  Height="200"
+                                  CellEditEnding="DgOrderDetails_CellEditEnding">
                             
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Mã SP" 
-                                                    Binding="{Binding ProductID}" 
-                                                    Width="80"/>
+                                                    Binding="{Binding ProductId}" 
+                                                    Width="80"
+                                                    IsReadOnly="True"/>
                                 <DataGridTextColumn Header="Tên sản phẩm" 
-                                                    Binding="{Binding ProductName}" 
-                                                    Width="200"/>
+                                                    Binding="{Binding Product.ProductName}" 
+                                                    Width="200"
+                                                    IsReadOnly="True"/>
                                 <DataGridTextColumn Header="Số lượng" 
                                                     Binding="{Binding Quantity}" 
                                                     Width="80"/>
                                 <DataGridTextColumn Header="Đơn giá" 
                                                     Binding="{Binding UnitPrice, StringFormat='₫{0:N0}'}" 
-                                                    Width="100"/>
+                                                    Width="100"
+                                                    IsReadOnly="True"/>
                                 <DataGridTextColumn Header="Thành tiền" 
                                                     Binding="{Binding Subtotal, StringFormat='₫{0:N0}'}" 
-                                                    Width="120"/>
+                                                    Width="120"
+                                                    IsReadOnly="True"/>
                             </DataGrid.Columns>
                         </DataGrid>
                     </StackPanel>
                 </Border>
                 
                 <!-- Order Summary -->
-                <Border Grid.Row="2" Background="White" CornerRadius="10" Padding="20">
+                <Border Grid.Row="3" Background="White" CornerRadius="10" Padding="20">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>

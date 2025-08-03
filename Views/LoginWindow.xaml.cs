@@ -4,14 +4,18 @@ using System.Windows;
 using System.Windows.Input;
 using AppOrderNilon.Models;
 using AppOrderNilon.Views;
+using AppOrderNilon.Services;
 
 namespace AppOrderNilon.Views
 {
     public partial class LoginWindow : Window
     {
+        private AdminService _adminService;
+
         public LoginWindow()
         {
             InitializeComponent();
+            _adminService = new AdminService();
             txtUsername.Focus();
         }
 
@@ -27,21 +31,47 @@ namespace AppOrderNilon.Views
                 return;
             }
 
-            // TODO: Implement proper authentication with database
-            // For now, using sample authentication logic
-            if (AuthenticateUser(username, password, out string userRole, out object user))
+            // Validate input
+            if (username.Length < 3)
             {
-                string displayName = GetDisplayName(user, userRole);
-                MessageBox.Show($"Đăng nhập thành công!\n\nChào mừng {displayName}\nRole: {userRole}", "Thông báo", 
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-                
-                // Open appropriate dashboard based on role
-                OpenDashboard(userRole, user);
-                this.Close();
+                MessageBox.Show("Tên đăng nhập phải có ít nhất 3 ký tự!", "Lỗi", 
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                txtUsername.Focus();
+                return;
             }
-            else
+
+            if (password.Length < 6)
             {
-                MessageBox.Show("Tên đăng nhập hoặc mật khẩu không đúng!\n\nTài khoản mẫu:\n- Admin: admin1/123456\n- Staff: staff1/123456\n- Customer: customer1/123456", "Lỗi", 
+                MessageBox.Show("Mật khẩu phải có ít nhất 6 ký tự!", "Lỗi", 
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                txtPassword.Focus();
+                return;
+            }
+
+            try
+            {
+                // Try to authenticate user
+                if (AuthenticateUser(username, password, out string userRole, out object user))
+                {
+                    string displayName = GetDisplayName(user, userRole);
+                    MessageBox.Show($"Đăng nhập thành công!\n\nChào mừng {displayName}\nRole: {userRole}", "Thông báo", 
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    
+                    // Open appropriate dashboard based on role
+                    OpenDashboard(userRole, user);
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Tên đăng nhập hoặc mật khẩu không đúng!\n\nTài khoản mẫu:\n- Admin: admin1/123456\n- Staff: staff1/123456\n- Customer: customer1/123456", "Lỗi", 
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    txtPassword.Clear();
+                    txtPassword.Focus();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi đăng nhập: {ex.Message}", "Lỗi", 
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -51,9 +81,44 @@ namespace AppOrderNilon.Views
             userRole = "";
             user = null;
 
-            // TODO: Replace with database authentication
-            // Sample authentication logic for demonstration
-            
+            try
+            {
+                // Try database authentication first
+                
+                // Admin authentication
+                var admin = _adminService.AuthenticateAdmin(username, password);
+                if (admin != null)
+                {
+                    userRole = "Admin";
+                    user = admin;
+                    return true;
+                }
+
+                // Staff authentication
+                var staff = _adminService.AuthenticateStaff(username, password);
+                if (staff != null)
+                {
+                    userRole = "Staff";
+                    user = staff;
+                    return true;
+                }
+
+                // Customer authentication
+                var customer = _adminService.AuthenticateCustomer(username, password);
+                if (customer != null)
+                {
+                    userRole = "Customer";
+                    user = customer;
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging
+                System.Diagnostics.Debug.WriteLine($"Database authentication failed: {ex.Message}");
+            }
+
+            // Fallback authentication logic for demonstration
             // Admin authentication
             if ((username == "admin1" || username == "admin2") && password == "123456")
             {
@@ -159,41 +224,80 @@ namespace AppOrderNilon.Views
 
         private void OpenDashboard(string userRole, object user)
         {
-            switch (userRole)
+            try
             {
-                case "Admin":
-                    DashboardWindow adminDashboard = new DashboardWindow();
-                    adminDashboard.Show();
-                    break;
-                    
-                case "Staff":
-                    StaffDashboardWindow staffDashboard = new StaffDashboardWindow(user as Staff);
-                    staffDashboard.Show();
-                    break;
-                    
-                case "Customer":
-                    CustomerDashboardWindow customerDashboard = new CustomerDashboardWindow(user as Customer);
-                    customerDashboard.Show();
-                    break;
-                    
-                default:
-                    MessageBox.Show("Role không hợp lệ!", "Lỗi", 
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    break;
+                switch (userRole)
+                {
+                    case "Admin":
+                        DashboardWindow adminDashboard = new DashboardWindow(user as Admin);
+                        adminDashboard.Show();
+                        break;
+                        
+                    case "Staff":
+                        StaffDashboardWindow staffDashboard = new StaffDashboardWindow(user as Staff);
+                        staffDashboard.Show();
+                        break;
+                        
+                    case "Customer":
+                        CustomerDashboardWindow customerDashboard = new CustomerDashboardWindow(user as Customer);
+                        customerDashboard.Show();
+                        break;
+                        
+                    default:
+                        MessageBox.Show("Role không hợp lệ!", "Lỗi", 
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở dashboard: {ex.Message}", "Lỗi", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void Register_Click(object sender, MouseButtonEventArgs e)
         {
-            RegisterWindow registerWindow = new RegisterWindow();
-            registerWindow.Show();
-            this.Close();
+            try
+            {
+                RegisterWindow registerWindow = new RegisterWindow();
+                registerWindow.Show();
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở form đăng ký: {ex.Message}", "Lỗi", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void ForgotPassword_Click(object sender, MouseButtonEventArgs e)
         {
-            MessageBox.Show("Chức năng quên mật khẩu sẽ được implement sau!", "Thông báo", 
+            MessageBox.Show("Chức năng quên mật khẩu sẽ được implement sau!\n\nLiên hệ admin để được hỗ trợ.", "Thông báo", 
                 MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        // Handle Enter key press
+        private void txtPassword_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                Login_Click(sender, e);
+            }
+        }
+
+        private void txtUsername_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                txtPassword.Focus();
+            }
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            _adminService?.Dispose();
+            base.OnClosed(e);
         }
     }
 } 

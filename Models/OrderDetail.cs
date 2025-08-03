@@ -21,6 +21,5 @@ public partial class OrderDetail
 
     public virtual Product? Product { get; set; }
 
-    // Navigation properties for display
-    public string ProductName => Product?.ProductName ?? "Unknown";
+
 }

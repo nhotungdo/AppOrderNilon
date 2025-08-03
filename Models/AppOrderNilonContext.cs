@@ -34,8 +34,35 @@ public partial class AppOrderNilonContext : DbContext
     public virtual DbSet<Supplier> Suppliers { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=NHOTUNG\\SQLEXPRESS;Database=AppOrderNilon;User Id=sa;Password=123;TrustServerCertificate=true;Trusted_Connection=SSPI;Encrypt=false;");
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            // Try LocalDB first (usually available on Windows)
+            var connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\AppOrderNilon.mdf;Integrated Security=True;TrustServerCertificate=true;";
+
+            // Fallback to SQL Server Express if LocalDB fails
+            if (!TestConnection(connectionString))
+            {
+                connectionString = "Data Source=.\\SQLEXPRESS;Database=AppOrderNilon;Integrated Security=True;TrustServerCertificate=true;";
+            }
+
+            optionsBuilder.UseSqlServer(connectionString);
+        }
+    }
+
+    private bool TestConnection(string connectionString)
+    {
+        try
+        {
+            using var connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString);
+            connection.Open();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -96,11 +123,11 @@ public partial class AppOrderNilonContext : DbContext
 
             entity.HasOne(d => d.Customer).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.CustomerId)
-                .HasConstraintName("FK__Orders__Customer__4AB81AF0");
+                .OnDelete(DeleteBehavior.SetNull);
 
             entity.HasOne(d => d.Staff).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.StaffId)
-                .HasConstraintName("FK__Orders__StaffID__4BAC3F29");
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<OrderDetail>(entity =>
@@ -119,11 +146,11 @@ public partial class AppOrderNilonContext : DbContext
 
             entity.HasOne(d => d.Order).WithMany(p => p.OrderDetails)
                 .HasForeignKey(d => d.OrderId)
-                .HasConstraintName("FK__OrderDeta__Order__4E88ABD4");
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(d => d.Product).WithMany(p => p.OrderDetails)
                 .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK__OrderDeta__Produ__4F7CD00D");
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<Product>(entity =>

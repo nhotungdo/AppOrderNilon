@@ -1,0 +1,66 @@
+<Window x:Class="AppOrderNilon.Views.SupplierManagementWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Quản lý Nhà cung cấp" Height="600" Width="1000"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Grid.Row="0" Text="QUẢN LÝ NHÀ CUNG CẤP" 
+                   FontSize="24" FontWeight="Bold" 
+                   HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+        <!-- Search and Controls -->
+        <Grid Grid.Row="1" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox x:Name="txtSearch" Grid.Column="0" 
+                     Margin="0,0,10,0" Padding="5"
+                     TextChanged="TxtSearch_TextChanged"
+                     ToolTip="Tìm kiếm theo tên, email, phone..."/>
+
+            <Button x:Name="btnAdd" Grid.Column="1" Content="Thêm mới" 
+                    Width="100" Margin="0,0,10,0" Click="BtnAdd_Click"/>
+
+            <Button x:Name="btnEdit" Grid.Column="2" Content="Sửa" 
+                    Width="80" Margin="0,0,10,0" Click="BtnEdit_Click"/>
+
+            <Button x:Name="btnDelete" Grid.Column="3" Content="Xóa" 
+                    Width="80" Click="BtnDelete_Click"/>
+        </Grid>
+
+        <!-- DataGrid -->
+        <DataGrid x:Name="dgSuppliers" Grid.Row="2" 
+                  AutoGenerateColumns="False" 
+                  CanUserAddRows="False" 
+                  CanUserDeleteRows="False"
+                  SelectionMode="Single"
+                  SelectionChanged="DgSuppliers_SelectionChanged">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding SupplierId}" Width="50"/>
+                <DataGridTextColumn Header="Tên NCC" Binding="{Binding SupplierName}" Width="150"/>
+                <DataGridTextColumn Header="Người liên hệ" Binding="{Binding ContactName}" Width="120"/>
+                <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" Width="120"/>
+                <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="180"/>
+                <DataGridTextColumn Header="Địa chỉ" Binding="{Binding Address}" Width="200"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Status -->
+        <TextBlock x:Name="txtStatus" Grid.Row="3" 
+                   Margin="0,10,0,0" 
+                   Text="Sẵn sàng" 
+                   FontStyle="Italic"/>
+    </Grid>
+</Window> 

@@ -144,13 +144,13 @@
                     
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Mã ĐH" 
-                                            Binding="{Binding OrderID}" 
+                                            Binding="{Binding OrderId}" 
                                             Width="80"/>
                         <DataGridTextColumn Header="Khách hàng" 
-                                            Binding="{Binding CustomerName}" 
+                                            Binding="{Binding Customer.CustomerName}" 
                                             Width="200"/>
                         <DataGridTextColumn Header="Nhân viên" 
-                                            Binding="{Binding StaffName}" 
+                                            Binding="{Binding Staff.FullName}" 
                                             Width="150"/>
                         <DataGridTextColumn Header="Ngày đặt" 
                                             Binding="{Binding OrderDate, StringFormat='dd/MM/yyyy'}" 

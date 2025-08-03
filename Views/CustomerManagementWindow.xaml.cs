@@ -4,26 +4,39 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using AppOrderNilon.Models;
+using AppOrderNilon.Services;
 
 namespace AppOrderNilon.Views
 {
     public partial class CustomerManagementWindow : Window
     {
+        private CustomerService _customerService;
         private List<Customer> allCustomers;
 
         public CustomerManagementWindow()
         {
             InitializeComponent();
+            _customerService = new CustomerService();
             LoadData();
         }
 
         private void LoadData()
         {
-            // TODO: Load data from database
-            // For now, using sample data
-            LoadSampleData();
-            RefreshCustomerGrid();
-            UpdateStatusBar();
+            try
+            {
+                allCustomers = _customerService.GetAllCustomers();
+                RefreshCustomerGrid();
+                UpdateStatusBar();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                // Fallback to sample data
+                LoadSampleData();
+                RefreshCustomerGrid();
+                UpdateStatusBar();
+            }
         }
 
         private void LoadSampleData()
@@ -62,44 +75,63 @@ namespace AppOrderNilon.Views
 
         private void RefreshCustomerGrid()
         {
-            var filteredCustomers = allCustomers.AsEnumerable();
-
-            // Apply search filter
-            if (!string.IsNullOrWhiteSpace(txtSearch.Text))
+            try
             {
-                string searchTerm = txtSearch.Text.ToLower();
-                filteredCustomers = filteredCustomers.Where(c => 
-                    c.CustomerName.ToLower().Contains(searchTerm) ||
-                    c.Phone.ToLower().Contains(searchTerm) ||
-                    c.Email.ToLower().Contains(searchTerm) ||
-                    c.Address.ToLower().Contains(searchTerm) ||
-                    c.Notes.ToLower().Contains(searchTerm));
-            }
+                List<Customer> filteredCustomers = allCustomers;
 
-            // Apply customer type filter
-            if (cmbCustomerType.SelectedIndex > 0)
-            {
-                switch (cmbCustomerType.SelectedIndex)
+                // Apply search filter
+                if (!string.IsNullOrWhiteSpace(txtSearch.Text))
                 {
-                    case 1: // VIP
-                        filteredCustomers = filteredCustomers.Where(c => c.Notes.Contains("VIP"));
-                        break;
-                    case 2: // Regular
-                        filteredCustomers = filteredCustomers.Where(c => !c.Notes.Contains("VIP"));
-                        break;
+                    string searchText = txtSearch.Text.ToLower();
+                    filteredCustomers = filteredCustomers.Where(c =>
+                        (c.CustomerName != null && c.CustomerName.ToLower().Contains(searchText)) ||
+                        (c.Phone != null && c.Phone.Contains(searchText)) ||
+                        (c.Email != null && c.Email.ToLower().Contains(searchText))
+                    ).ToList();
                 }
-            }
 
-            dgCustomers.ItemsSource = filteredCustomers.ToList();
+                // Apply customer type filter
+                if (cmbCustomerType.SelectedIndex > 0)
+                {
+                    switch (cmbCustomerType.SelectedIndex)
+                    {
+                        case 1: // VIP
+                            filteredCustomers = filteredCustomers.Where(c => c.Notes?.Contains("VIP", StringComparison.OrdinalIgnoreCase) == true).ToList();
+                            break;
+                        case 2: // Regular
+                            filteredCustomers = filteredCustomers.Where(c => c.Notes?.Contains("VIP", StringComparison.OrdinalIgnoreCase) != true).ToList();
+                            break;
+                    }
+                }
+
+                dgCustomers.ItemsSource = filteredCustomers;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi lọc dữ liệu: {ex.Message}", "Lỗi", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                dgCustomers.ItemsSource = allCustomers;
+            }
         }
 
         private void UpdateStatusBar()
         {
-            txtTotalCustomers.Text = allCustomers.Count.ToString();
-            int vipCount = allCustomers.Count(c => c.Notes.Contains("VIP"));
-            txtVIPCustomers.Text = vipCount.ToString();
-            int regularCount = allCustomers.Count(c => !c.Notes.Contains("VIP"));
-            txtRegularCustomers.Text = regularCount.ToString();
+            try
+            {
+                var stats = _customerService.GetCustomerStatistics();
+                txtTotalCustomers.Text = stats.TotalCustomers.ToString();
+                txtVIPCustomers.Text = stats.VIPCustomers.ToString();
+                txtRegularCustomers.Text = stats.RegularCustomers.ToString();
+            }
+            catch
+            {
+                // Fallback to manual calculation
+                txtTotalCustomers.Text = allCustomers.Count.ToString();
+                int vipCount = allCustomers.Count(c => c.Notes?.Contains("VIP") == true);
+                txtVIPCustomers.Text = vipCount.ToString();
+                int regularCount = allCustomers.Count(c => !c.Notes?.Contains("VIP") == true);
+                txtRegularCustomers.Text = regularCount.ToString();
+            }
         }
 
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
@@ -119,11 +151,21 @@ namespace AppOrderNilon.Views
 
         private void AddCustomer_Click(object sender, RoutedEventArgs e)
         {
-            CustomerDetailWindow customerDetailWindow = new CustomerDetailWindow(null);
-            if (customerDetailWindow.ShowDialog() == true)
+            var customerForm = new CustomerFormWindow();
+            if (customerForm.ShowDialog() == true)
             {
-                // TODO: Add new customer to database
-                LoadData(); // Reload data
+                var newCustomer = customerForm.Customer;
+                if (_customerService.CreateCustomer(newCustomer))
+                {
+                    MessageBox.Show("Thêm khách hàng thành công!", "Thông báo", 
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    LoadData();
+                }
+                else
+                {
+                    MessageBox.Show("Lỗi khi thêm khách hàng!", "Lỗi", 
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
@@ -131,8 +173,18 @@ namespace AppOrderNilon.Views
         {
             if (dgCustomers.SelectedItem is Customer selectedCustomer)
             {
-                CustomerDetailWindow customerDetailWindow = new CustomerDetailWindow(selectedCustomer);
-                customerDetailWindow.ShowDialog();
+                // Get full customer data with orders
+                var fullCustomer = _customerService.GetCustomerById(selectedCustomer.CustomerId);
+                if (fullCustomer != null)
+                {
+                    CustomerDetailWindow customerDetailWindow = new CustomerDetailWindow(fullCustomer);
+                    customerDetailWindow.ShowDialog();
+                }
+                else
+                {
+                    CustomerDetailWindow customerDetailWindow = new CustomerDetailWindow(selectedCustomer);
+                    customerDetailWindow.ShowDialog();
+                }
             }
             else
             {
@@ -145,11 +197,21 @@ namespace AppOrderNilon.Views
         {
             if (dgCustomers.SelectedItem is Customer selectedCustomer)
             {
-                CustomerDetailWindow customerDetailWindow = new CustomerDetailWindow(selectedCustomer);
-                if (customerDetailWindow.ShowDialog() == true)
+                var customerForm = new CustomerFormWindow(selectedCustomer);
+                if (customerForm.ShowDialog() == true)
                 {
-                    // TODO: Update customer in database
-                    LoadData(); // Reload data
+                    var updatedCustomer = customerForm.Customer;
+                    if (_customerService.UpdateCustomer(updatedCustomer))
+                    {
+                        MessageBox.Show("Cập nhật khách hàng thành công!", "Thông báo", 
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                        LoadData();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Lỗi khi cập nhật khách hàng!", "Lỗi", 
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
             else
@@ -168,12 +230,30 @@ namespace AppOrderNilon.Views
                 
                 if (result == MessageBoxResult.Yes)
                 {
-                    // TODO: Delete customer from database
-                    allCustomers.Remove(selectedCustomer);
-                    RefreshCustomerGrid();
-                    UpdateStatusBar();
-                    MessageBox.Show("Đã xóa khách hàng thành công!", "Thông báo", 
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    try
+                    {
+                        if (_customerService.DeleteCustomer(selectedCustomer.CustomerId))
+                        {
+                            MessageBox.Show("Đã xóa khách hàng thành công!", "Thông báo", 
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+                            LoadData();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Lỗi khi xóa khách hàng!", "Lỗi", 
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        MessageBox.Show($"Không thể xóa khách hàng: {ex.Message}", "Lỗi", 
+                            MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Lỗi khi xóa khách hàng: {ex.Message}", "Lỗi", 
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
             else
@@ -202,5 +282,11 @@ namespace AppOrderNilon.Views
                 this.Close();
             }
         }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            _customerService?.Dispose();
+            base.OnClosed(e);
+        }
     }
-} 
+}

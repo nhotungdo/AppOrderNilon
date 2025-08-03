@@ -1,0 +1,253 @@
+<Window x:Class="AppOrderNilon.Views.AdminManagementWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Quản lý Admin và Staff - AppOrderNilon" Height="700" Width="1000"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F5F5">
+    
+    <Window.Resources>
+        <DropShadowEffect x:Key="CardShadow" 
+                          BlurRadius="8" 
+                          Direction="270" 
+                          ShadowDepth="2" 
+                          Color="#22000000"/>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#2196F3" Padding="15">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Quản lý Admin và Staff" 
+                               FontSize="24" 
+                               FontWeight="Bold" 
+                               Foreground="White"/>
+                    <TextBlock Text="Quản lý tài khoản quản trị và nhân viên" 
+                               FontSize="14" 
+                               Foreground="White" 
+                               Margin="0,5,0,0"/>
+                </StackPanel>
+                
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Về Dashboard" 
+                            Background="Transparent" 
+                            Foreground="White" 
+                            BorderBrush="White" 
+                            BorderThickness="1"
+                            Padding="10,5"
+                            Margin="0,0,10,0"
+                            Click="BackToDashboard_Click"/>
+                    <Button Content="Đăng xuất" 
+                            Background="Transparent" 
+                            Foreground="White" 
+                            BorderBrush="White" 
+                            BorderThickness="1"
+                            Padding="10,5"
+                            Click="Logout_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <!-- Main Content -->
+        <Grid Grid.Row="1" Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Admin Management -->
+            <Border Grid.Column="0" 
+                    Background="White" 
+                    CornerRadius="10" 
+                    Padding="20" 
+                    Margin="0,0,10,0"
+                    Effect="{StaticResource CardShadow}">
+                <StackPanel>
+                    <TextBlock Text="Quản lý Admin" 
+                               FontSize="18" 
+                               FontWeight="Bold" 
+                               Margin="0,0,0,15"/>
+                    
+                    <!-- Admin Controls -->
+                    <Grid Margin="0,0,0,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBox x:Name="txtAdminSearch" 
+                                 Grid.Column="0"
+                                 Text="Tìm kiếm admin..." 
+                                 Padding="10,8"
+                                 Margin="0,0,10,0"
+                                 TextChanged="AdminSearch_TextChanged"/>
+                        
+                        <Button x:Name="btnAddAdmin" 
+                                Grid.Column="1"
+                                Content="Thêm Admin" 
+                                Background="#4CAF50" 
+                                Foreground="White" 
+                                Padding="15,8"
+                                Margin="0,0,10,0"
+                                Click="AddAdmin_Click"/>
+                        
+                        <Button x:Name="btnRefreshAdmins" 
+                                Grid.Column="2"
+                                Content="Làm mới" 
+                                Background="#2196F3" 
+                                Foreground="White" 
+                                Padding="15,8"
+                                Click="RefreshAdmins_Click"/>
+                    </Grid>
+                    
+                    <!-- Admin List -->
+                    <DataGrid x:Name="dgAdmins" 
+                              AutoGenerateColumns="False" 
+                              IsReadOnly="True"
+                              SelectionMode="Single"
+                              SelectionChanged="Admin_SelectionChanged"
+                              Height="300">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding AdminId}" Width="50"/>
+                            <DataGridTextColumn Header="Tên đăng nhập" Binding="{Binding Username}" Width="120"/>
+                            <DataGridTextColumn Header="Họ tên" Binding="{Binding FullName}" Width="150"/>
+                            <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="180"/>
+                            <DataGridTextColumn Header="SĐT" Binding="{Binding Phone}" Width="100"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    
+                    <!-- Admin Actions -->
+                    <Grid Margin="0,15,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <Button x:Name="btnEditAdmin" 
+                                Grid.Column="0"
+                                Content="Sửa Admin" 
+                                Background="#FF9800" 
+                                Foreground="White" 
+                                Padding="10,8"
+                                Margin="0,0,5,0"
+                                Click="EditAdmin_Click"
+                                IsEnabled="False"/>
+                        
+                        <Button x:Name="btnDeleteAdmin" 
+                                Grid.Column="1"
+                                Content="Xóa Admin" 
+                                Background="#F44336" 
+                                Foreground="White" 
+                                Padding="10,8"
+                                Margin="5,0,0,0"
+                                Click="DeleteAdmin_Click"
+                                IsEnabled="False"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+            
+            <!-- Staff Management -->
+            <Border Grid.Column="1" 
+                    Background="White" 
+                    CornerRadius="10" 
+                    Padding="20" 
+                    Margin="10,0,0,0"
+                    Effect="{StaticResource CardShadow}">
+                <StackPanel>
+                    <TextBlock Text="Quản lý Staff" 
+                               FontSize="18" 
+                               FontWeight="Bold" 
+                               Margin="0,0,0,15"/>
+                    
+                    <!-- Staff Controls -->
+                    <Grid Margin="0,0,0,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBox x:Name="txtStaffSearch" 
+                                 Grid.Column="0"
+                                 Text="Tìm kiếm staff..." 
+                                 Padding="10,8"
+                                 Margin="0,0,10,0"
+                                 TextChanged="StaffSearch_TextChanged"/>
+                        
+                        <Button x:Name="btnAddStaff" 
+                                Grid.Column="1"
+                                Content="Thêm Staff" 
+                                Background="#4CAF50" 
+                                Foreground="White" 
+                                Padding="15,8"
+                                Margin="0,0,10,0"
+                                Click="AddStaff_Click"/>
+                        
+                        <Button x:Name="btnRefreshStaff" 
+                                Grid.Column="2"
+                                Content="Làm mới" 
+                                Background="#2196F3" 
+                                Foreground="White" 
+                                Padding="15,8"
+                                Click="RefreshStaff_Click"/>
+                    </Grid>
+                    
+                    <!-- Staff List -->
+                    <DataGrid x:Name="dgStaff" 
+                              AutoGenerateColumns="False" 
+                              IsReadOnly="True"
+                              SelectionMode="Single"
+                              SelectionChanged="Staff_SelectionChanged"
+                              Height="300">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding StaffId}" Width="50"/>
+                            <DataGridTextColumn Header="Tên đăng nhập" Binding="{Binding Username}" Width="120"/>
+                            <DataGridTextColumn Header="Họ tên" Binding="{Binding FullName}" Width="150"/>
+                            <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="180"/>
+                            <DataGridTextColumn Header="SĐT" Binding="{Binding Phone}" Width="100"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    
+                    <!-- Staff Actions -->
+                    <Grid Margin="0,15,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <Button x:Name="btnEditStaff" 
+                                Grid.Column="0"
+                                Content="Sửa Staff" 
+                                Background="#FF9800" 
+                                Foreground="White" 
+                                Padding="10,8"
+                                Margin="0,0,5,0"
+                                Click="EditStaff_Click"
+                                IsEnabled="False"/>
+                        
+                        <Button x:Name="btnDeleteStaff" 
+                                Grid.Column="1"
+                                Content="Xóa Staff" 
+                                Background="#F44336" 
+                                Foreground="White" 
+                                Padding="10,8"
+                                Margin="5,0,0,0"
+                                Click="DeleteStaff_Click"
+                                IsEnabled="False"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window> 

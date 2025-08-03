@@ -364,6 +364,78 @@
                                     Margin="10,0,0,0"
                                     Click="Reports_Click"/>
                         </Grid>
+                        
+                        <!-- Additional Admin Actions -->
+                        <Grid Margin="0,20,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <Button Grid.Column="0" 
+                                    Content="Quản lý Admin &amp; Staff" 
+                                    Height="50" 
+                                    Background="#607D8B" 
+                                    Foreground="White" 
+                                    FontWeight="SemiBold"
+                                    Margin="0,0,10,0"
+                                    Click="ManageAdmins_Click"/>
+                            
+                            <Button Grid.Column="1" 
+                                    Content="Quản lý Danh mục" 
+                                    Height="50" 
+                                    Background="#795548" 
+                                    Foreground="White" 
+                                    FontWeight="SemiBold"
+                                    Margin="5,0,5,0"
+                                    Click="ManageCategories_Click"/>
+                            
+                            <Button Grid.Column="2" 
+                                    Content="Cài đặt hệ thống" 
+                                    Height="50" 
+                                    Background="#795548" 
+                                    Foreground="White" 
+                                    FontWeight="SemiBold"
+                                    Margin="10,0,0,0"
+                                    Click="SystemSettings_Click"/>
+                        </Grid>
+                        
+                        <!-- Additional Management Actions -->
+                        <Grid Margin="0,20,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <Button Grid.Column="0" 
+                                    Content="Quản lý Nhân viên" 
+                                    Height="50" 
+                                    Background="#E91E63" 
+                                    Foreground="White" 
+                                    FontWeight="SemiBold"
+                                    Margin="0,0,10,0"
+                                    Click="ManageStaff_Click"/>
+                            
+                            <Button Grid.Column="1" 
+                                    Content="Quản lý Nhà cung cấp" 
+                                    Height="50" 
+                                    Background="#00BCD4" 
+                                    Foreground="White" 
+                                    FontWeight="SemiBold"
+                                    Margin="5,0,5,0"
+                                    Click="ManageSuppliers_Click"/>
+                            
+                            <Button Grid.Column="2" 
+                                    Content="Quản lý Báo cáo" 
+                                    Height="50" 
+                                    Background="#8BC34A" 
+                                    Foreground="White" 
+                                    FontWeight="SemiBold"
+                                    Margin="10,0,0,0"
+                                    Click="ManageReports_Click"/>
+                        </Grid>
                     </StackPanel>
                 </Border>
             </Grid>

@@ -1,0 +1,146 @@
+<Window x:Class="AppOrderNilon.Views.CustomerFormWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Thông tin Khách hàng" Height="500" Width="600"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#F5F5F5">
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Header -->
+        <TextBlock Grid.Row="0" 
+                   x:Name="txtTitle"
+                   Text="Thêm Khách hàng mới" 
+                   FontSize="20" 
+                   FontWeight="Bold" 
+                   Margin="0,0,0,20"
+                   HorizontalAlignment="Center"/>
+        
+        <!-- Form -->
+        <StackPanel Grid.Row="1" Margin="0,0,0,20">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <!-- Customer Name -->
+                <TextBlock Grid.Row="0" Grid.Column="0" 
+                           Text="Tên khách hàng:" 
+                           VerticalAlignment="Center" 
+                           Margin="0,0,10,10"/>
+                <TextBox Grid.Row="0" Grid.Column="1" 
+                         x:Name="txtCustomerName" 
+                         Padding="8,6" 
+                         Margin="0,0,0,10"/>
+                
+                <!-- Phone -->
+                <TextBlock Grid.Row="1" Grid.Column="0" 
+                           Text="Số điện thoại:" 
+                           VerticalAlignment="Center" 
+                           Margin="0,0,10,10"/>
+                <TextBox Grid.Row="1" Grid.Column="1" 
+                         x:Name="txtPhone" 
+                         Padding="8,6" 
+                         Margin="0,0,0,10"/>
+                
+                <!-- Email -->
+                <TextBlock Grid.Row="2" Grid.Column="0" 
+                           Text="Email:" 
+                           VerticalAlignment="Center" 
+                           Margin="0,0,10,10"/>
+                <TextBox Grid.Row="2" Grid.Column="1" 
+                         x:Name="txtEmail" 
+                         Padding="8,6" 
+                         Margin="0,0,0,10"/>
+                
+                <!-- Address -->
+                <TextBlock Grid.Row="3" Grid.Column="0" 
+                           Text="Địa chỉ:" 
+                           VerticalAlignment="Center" 
+                           Margin="0,0,10,10"/>
+                <TextBox Grid.Row="3" Grid.Column="1" 
+                         x:Name="txtAddress" 
+                         Padding="8,6" 
+                         Margin="0,0,0,10"/>
+                
+                <!-- Customer Type -->
+                <TextBlock Grid.Row="4" Grid.Column="0" 
+                           Text="Loại khách hàng:" 
+                           VerticalAlignment="Center" 
+                           Margin="0,0,10,10"/>
+                <ComboBox Grid.Row="4" Grid.Column="1" 
+                          x:Name="cmbCustomerType" 
+                          Padding="8,6" 
+                          Margin="0,0,0,10">
+                    <ComboBoxItem Content="Khách hàng thường" IsSelected="True"/>
+                    <ComboBoxItem Content="Khách hàng VIP"/>
+                </ComboBox>
+                
+                <!-- Notes -->
+                <TextBlock Grid.Row="5" Grid.Column="0" 
+                           Text="Ghi chú:" 
+                           VerticalAlignment="Top" 
+                           Margin="0,0,10,10"/>
+                <TextBox Grid.Row="5" Grid.Column="1" 
+                         x:Name="txtNotes" 
+                         Padding="8,6" 
+                         Height="80"
+                         TextWrapping="Wrap"
+                         AcceptsReturn="True"
+                         VerticalScrollBarVisibility="Auto"
+                         Margin="0,0,0,10"/>
+                
+                <!-- Username (for login) -->
+                <TextBlock Grid.Row="6" Grid.Column="0" 
+                           Text="Tên đăng nhập:" 
+                           VerticalAlignment="Center" 
+                           Margin="0,0,10,10"/>
+                <TextBox Grid.Row="6" Grid.Column="1" 
+                         x:Name="txtUsername" 
+                         Padding="8,6" 
+                         Margin="0,0,0,10"/>
+            </Grid>
+        </StackPanel>
+        
+        <!-- Buttons -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Button Grid.Column="0" 
+                    x:Name="btnSave"
+                    Content="Lưu" 
+                    Background="#4CAF50" 
+                    Foreground="White" 
+                    Padding="20,10" 
+                    Margin="0,0,10,0"
+                    Click="Save_Click"/>
+            
+            <Button Grid.Column="1" 
+                    Content="Hủy" 
+                    Background="#F44336" 
+                    Foreground="White" 
+                    Padding="20,10" 
+                    Margin="10,0,0,0"
+                    Click="Cancel_Click"/>
+        </Grid>
+    </Grid>
+</Window> 
