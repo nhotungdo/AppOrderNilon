@@ -33,7 +33,7 @@ namespace AppOrderNilon.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -42,16 +42,18 @@ namespace AppOrderNilon.Views
         {
             try
             {
-                _allAdmins = _adminService.GetAllAdmins();
+                _allAdmins = _adminService.GetAllAdmins() ?? new List<Admin>();
                 dgAdmins.ItemsSource = _allAdmins;
-                
+
                 // Update UI based on admin count
                 UpdateAdminUI();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải danh sách admin: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi tải danh sách admin: {ex.Message}", "Lỗi",
                     MessageBoxButton.OK, MessageBoxImage.Error);
+                _allAdmins = new List<Admin>();
+                dgAdmins.ItemsSource = _allAdmins;
             }
         }
 
@@ -59,18 +61,26 @@ namespace AppOrderNilon.Views
         {
             try
             {
-                _allStaff = _adminService.GetAllStaff();
+                _allStaff = _adminService.GetAllStaff() ?? new List<Staff>();
                 dgStaff.ItemsSource = _allStaff;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải danh sách staff: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi tải danh sách staff: {ex.Message}", "Lỗi",
                     MessageBoxButton.OK, MessageBoxImage.Error);
+                _allStaff = new List<Staff>();
+                dgStaff.ItemsSource = _allStaff;
             }
         }
 
         private void UpdateAdminUI()
         {
+            // Ensure _allAdmins is not null
+            if (_allAdmins == null)
+            {
+                _allAdmins = new List<Admin>();
+            }
+
             // Disable delete button if only one admin remains
             if (_allAdmins.Count <= 1)
             {
@@ -89,7 +99,13 @@ namespace AppOrderNilon.Views
         {
             try
             {
-                string searchText = txtAdminSearch.Text.ToLower();
+                // Ensure _allAdmins is not null
+                if (_allAdmins == null)
+                {
+                    _allAdmins = new List<Admin>();
+                }
+
+                string searchText = txtAdminSearch?.Text?.ToLower() ?? "";
                 if (string.IsNullOrWhiteSpace(searchText) || searchText == "tìm kiếm admin...")
                 {
                     dgAdmins.ItemsSource = _allAdmins;
@@ -97,26 +113,32 @@ namespace AppOrderNilon.Views
                 }
 
                 var filteredAdmins = _allAdmins.Where(a =>
-                    a.Username.ToLower().Contains(searchText) ||
-                    a.FullName?.ToLower().Contains(searchText) == true ||
-                    a.Email?.ToLower().Contains(searchText) == true ||
-                    a.Phone?.ToLower().Contains(searchText) == true
+                    (a.Username?.ToLower().Contains(searchText) == true) ||
+                    (a.FullName?.ToLower().Contains(searchText) == true) ||
+                    (a.Email?.ToLower().Contains(searchText) == true) ||
+                    (a.Phone?.ToLower().Contains(searchText) == true)
                 ).ToList();
 
                 dgAdmins.ItemsSource = filteredAdmins;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tìm kiếm: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi tìm kiếm: {ex.Message}", "Lỗi",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void Admin_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // Ensure _allAdmins is not null
+            if (_allAdmins == null)
+            {
+                _allAdmins = new List<Admin>();
+            }
+
             _selectedAdmin = dgAdmins.SelectedItem as Admin;
             btnEditAdmin.IsEnabled = _selectedAdmin != null;
-            
+
             // Update delete button state
             if (_selectedAdmin != null && _allAdmins.Count > 1)
             {
@@ -130,7 +152,7 @@ namespace AppOrderNilon.Views
             }
         }
 
-        private void AddAdmin_Click(object sender, RoutedEventArgs e)
+        private async void AddAdmin_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -138,27 +160,27 @@ namespace AppOrderNilon.Views
                 if (adminForm.ShowDialog() == true)
                 {
                     var newAdmin = adminForm.Admin;
-                    if (_adminService.CreateAdmin(newAdmin))
+                    if (await _adminService.CreateAdminAsync(newAdmin))
                     {
-                        MessageBox.Show("Thêm admin thành công!", "Thông báo", 
+                        MessageBox.Show("Thêm admin thành công!", "Thông báo",
                             MessageBoxButton.OK, MessageBoxImage.Information);
                         LoadAdmins();
                     }
                     else
                     {
-                        MessageBox.Show("Lỗi khi thêm admin! Có thể tên đăng nhập đã tồn tại.", "Lỗi", 
+                        MessageBox.Show("Lỗi khi thêm admin! Có thể tên đăng nhập đã tồn tại.", "Lỗi",
                             MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi thêm admin: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi thêm admin: {ex.Message}", "Lỗi",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private void EditAdmin_Click(object sender, RoutedEventArgs e)
+        private async void EditAdmin_Click(object sender, RoutedEventArgs e)
         {
             if (_selectedAdmin == null) return;
 
@@ -168,60 +190,66 @@ namespace AppOrderNilon.Views
                 if (adminForm.ShowDialog() == true)
                 {
                     var updatedAdmin = adminForm.Admin;
-                    if (_adminService.UpdateAdmin(updatedAdmin))
+                    if (await _adminService.UpdateAdminAsync(updatedAdmin))
                     {
-                        MessageBox.Show("Cập nhật admin thành công!", "Thông báo", 
+                        MessageBox.Show("Cập nhật admin thành công!", "Thông báo",
                             MessageBoxButton.OK, MessageBoxImage.Information);
                         LoadAdmins();
                     }
                     else
                     {
-                        MessageBox.Show("Lỗi khi cập nhật admin! Có thể tên đăng nhập đã tồn tại.", "Lỗi", 
+                        MessageBox.Show("Lỗi khi cập nhật admin! Có thể tên đăng nhập đã tồn tại.", "Lỗi",
                             MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi cập nhật admin: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi cập nhật admin: {ex.Message}", "Lỗi",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private void DeleteAdmin_Click(object sender, RoutedEventArgs e)
+        private async void DeleteAdmin_Click(object sender, RoutedEventArgs e)
         {
             if (_selectedAdmin == null) return;
+
+            // Ensure _allAdmins is not null
+            if (_allAdmins == null)
+            {
+                _allAdmins = new List<Admin>();
+            }
 
             // Prevent deletion of the last admin
             if (_allAdmins.Count <= 1)
             {
-                MessageBox.Show("Không thể xóa admin cuối cùng trong hệ thống!", "Cảnh báo", 
+                MessageBox.Show("Không thể xóa admin cuối cùng trong hệ thống!", "Cảnh báo",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa admin '{_selectedAdmin.Username}'?\n\nHành động này không thể hoàn tác!", 
+            var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa admin '{_selectedAdmin.Username ?? "Unknown"}'?\n\nHành động này không thể hoàn tác!",
                 "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (result == MessageBoxResult.Yes)
             {
                 try
                 {
-                    if (_adminService.DeleteAdmin(_selectedAdmin.AdminId))
+                    if (await _adminService.DeleteAdminAsync(_selectedAdmin.AdminId))
                     {
-                        MessageBox.Show("Xóa admin thành công!", "Thông báo", 
+                        MessageBox.Show("Xóa admin thành công!", "Thông báo",
                             MessageBoxButton.OK, MessageBoxImage.Information);
                         LoadAdmins();
                     }
                     else
                     {
-                        MessageBox.Show("Lỗi khi xóa admin! Có thể admin này đang được sử dụng.", "Lỗi", 
+                        MessageBox.Show("Lỗi khi xóa admin! Có thể admin này đang được sử dụng.", "Lỗi",
                             MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Lỗi khi xóa admin: {ex.Message}", "Lỗi", 
+                    MessageBox.Show($"Lỗi khi xóa admin: {ex.Message}", "Lỗi",
                         MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
@@ -237,7 +265,13 @@ namespace AppOrderNilon.Views
         {
             try
             {
-                string searchText = txtStaffSearch.Text.ToLower();
+                // Ensure _allStaff is not null
+                if (_allStaff == null)
+                {
+                    _allStaff = new List<Staff>();
+                }
+
+                string searchText = txtStaffSearch?.Text?.ToLower() ?? "";
                 if (string.IsNullOrWhiteSpace(searchText) || searchText == "tìm kiếm staff...")
                 {
                     dgStaff.ItemsSource = _allStaff;
@@ -245,17 +279,17 @@ namespace AppOrderNilon.Views
                 }
 
                 var filteredStaff = _allStaff.Where(s =>
-                    s.Username.ToLower().Contains(searchText) ||
-                    s.FullName?.ToLower().Contains(searchText) == true ||
-                    s.Email?.ToLower().Contains(searchText) == true ||
-                    s.Phone?.ToLower().Contains(searchText) == true
+                    (s.Username?.ToLower().Contains(searchText) == true) ||
+                    (s.FullName?.ToLower().Contains(searchText) == true) ||
+                    (s.Email?.ToLower().Contains(searchText) == true) ||
+                    (s.Phone?.ToLower().Contains(searchText) == true)
                 ).ToList();
 
                 dgStaff.ItemsSource = filteredStaff;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tìm kiếm: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi tìm kiếm: {ex.Message}", "Lỗi",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -267,26 +301,35 @@ namespace AppOrderNilon.Views
             btnDeleteStaff.IsEnabled = _selectedStaff != null;
         }
 
-        private void AddStaff_Click(object sender, RoutedEventArgs e)
+        private async void AddStaff_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 var staffForm = new StaffFormWindow();
                 if (staffForm.ShowDialog() == true)
                 {
-                    MessageBox.Show("Thêm staff thành công!", "Thông báo", 
-                        MessageBoxButton.OK, MessageBoxImage.Information);
-                    LoadStaff();
+                    var newStaff = staffForm.Staff;
+                    if (await _adminService.CreateStaffAsync(newStaff))
+                    {
+                        MessageBox.Show("Thêm staff thành công!", "Thông báo",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                        LoadStaff();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Lỗi khi thêm staff! Có thể tên đăng nhập đã tồn tại.", "Lỗi",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi thêm staff: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi thêm staff: {ex.Message}", "Lỗi",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private void EditStaff_Click(object sender, RoutedEventArgs e)
+        private async void EditStaff_Click(object sender, RoutedEventArgs e)
         {
             if (_selectedStaff == null) return;
 
@@ -295,44 +338,53 @@ namespace AppOrderNilon.Views
                 var staffForm = new StaffFormWindow(_selectedStaff);
                 if (staffForm.ShowDialog() == true)
                 {
-                    MessageBox.Show("Cập nhật staff thành công!", "Thông báo", 
-                        MessageBoxButton.OK, MessageBoxImage.Information);
-                    LoadStaff();
+                    var updatedStaff = staffForm.Staff;
+                    if (await _adminService.UpdateStaffAsync(updatedStaff))
+                    {
+                        MessageBox.Show("Cập nhật staff thành công!", "Thông báo",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                        LoadStaff();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Lỗi khi cập nhật staff! Có thể tên đăng nhập đã tồn tại.", "Lỗi",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi cập nhật staff: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi cập nhật staff: {ex.Message}", "Lỗi",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private void DeleteStaff_Click(object sender, RoutedEventArgs e)
+        private async void DeleteStaff_Click(object sender, RoutedEventArgs e)
         {
             if (_selectedStaff == null) return;
 
-            var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa staff '{_selectedStaff.Username}'?\n\nHành động này không thể hoàn tác!", 
+            var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa staff '{_selectedStaff.Username ?? "Unknown"}'?\n\nHành động này không thể hoàn tác!",
                 "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (result == MessageBoxResult.Yes)
             {
                 try
                 {
-                    if (_adminService.DeleteStaff(_selectedStaff.StaffId))
+                    if (await _adminService.DeleteStaffAsync(_selectedStaff.StaffId))
                     {
-                        MessageBox.Show("Xóa staff thành công!", "Thông báo", 
+                        MessageBox.Show("Xóa staff thành công!", "Thông báo",
                             MessageBoxButton.OK, MessageBoxImage.Information);
                         LoadStaff();
                     }
                     else
                     {
-                        MessageBox.Show("Lỗi khi xóa staff! Có thể staff này đang được sử dụng.", "Lỗi", 
+                        MessageBox.Show("Lỗi khi xóa staff! Có thể staff này đang được sử dụng.", "Lỗi",
                             MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Lỗi khi xóa staff: {ex.Message}", "Lỗi", 
+                    MessageBox.Show($"Lỗi khi xóa staff: {ex.Message}", "Lỗi",
                         MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
@@ -354,16 +406,16 @@ namespace AppOrderNilon.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi chuyển về dashboard: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi chuyển về dashboard: {ex.Message}", "Lỗi",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void Logout_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận", 
+            var result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận",
                 MessageBoxButton.YesNo, MessageBoxImage.Question);
-            
+
             if (result == MessageBoxResult.Yes)
             {
                 try
@@ -374,7 +426,7 @@ namespace AppOrderNilon.Views
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Lỗi khi đăng xuất: {ex.Message}", "Lỗi", 
+                    MessageBox.Show($"Lỗi khi đăng xuất: {ex.Message}", "Lỗi",
                         MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
@@ -386,4 +438,4 @@ namespace AppOrderNilon.Views
             base.OnClosed(e);
         }
     }
-} 
+}

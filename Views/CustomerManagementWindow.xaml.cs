@@ -30,9 +30,10 @@ namespace AppOrderNilon.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải dữ liệu: {ex.Message}", "Lỗi",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-                // Fallback to sample data
+                // Log error for debugging
+                System.Diagnostics.Debug.WriteLine($"Database error: {ex.Message}");
+                
+                // Fallback to sample data without showing error popup
                 LoadSampleData();
                 RefreshCustomerGrid();
                 UpdateStatusBar();
@@ -149,14 +150,35 @@ namespace AppOrderNilon.Views
             // Handle customer selection if needed
         }
 
-        private void AddCustomer_Click(object sender, RoutedEventArgs e)
+        private async void AddCustomer_Click(object sender, RoutedEventArgs e)
         {
             var customerForm = new CustomerFormWindow();
             if (customerForm.ShowDialog() == true)
             {
-                MessageBox.Show("Thêm khách hàng thành công!", "Thông báo",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-                LoadData();
+                try
+                {
+                    var newCustomer = customerForm.Customer;
+                    if (newCustomer != null)
+                    {
+                        var success = await _customerService.CreateCustomerAsync(newCustomer, "password123");
+                        if (success)
+                        {
+                            MessageBox.Show("Thêm khách hàng thành công!", "Thông báo",
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+                            LoadData();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Lỗi khi thêm khách hàng!", "Lỗi",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi thêm khách hàng: {ex.Message}", "Lỗi",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
@@ -184,16 +206,38 @@ namespace AppOrderNilon.Views
             }
         }
 
-        private void EditCustomer_Click(object sender, RoutedEventArgs e)
+        private async void EditCustomer_Click(object sender, RoutedEventArgs e)
         {
             if (dgCustomers.SelectedItem is Customer selectedCustomer)
             {
                 var customerForm = new CustomerFormWindow(selectedCustomer);
                 if (customerForm.ShowDialog() == true)
                 {
-                    MessageBox.Show("Cập nhật khách hàng thành công!", "Thông báo",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
-                    LoadData();
+                    try
+                    {
+                        var updatedCustomer = customerForm.Customer;
+                        if (updatedCustomer != null)
+                        {
+                            updatedCustomer.CustomerId = selectedCustomer.CustomerId; // Ensure ID is preserved
+                            var success = await _customerService.UpdateCustomerAsync(updatedCustomer);
+                            if (success)
+                            {
+                                MessageBox.Show("Cập nhật khách hàng thành công!", "Thông báo",
+                                    MessageBoxButton.OK, MessageBoxImage.Information);
+                                LoadData();
+                            }
+                            else
+                            {
+                                MessageBox.Show("Lỗi khi cập nhật khách hàng!", "Lỗi",
+                                    MessageBoxButton.OK, MessageBoxImage.Error);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Lỗi khi cập nhật khách hàng: {ex.Message}", "Lỗi",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
             else

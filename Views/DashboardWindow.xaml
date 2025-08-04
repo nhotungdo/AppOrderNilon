@@ -374,13 +374,13 @@
                             </Grid.ColumnDefinitions>
                             
                             <Button Grid.Column="0" 
-                                    Content="Quản lý Admin &amp; Staff" 
+                                    Content="Quản lý Staff &amp; Customer" 
                                     Height="50" 
                                     Background="#607D8B" 
                                     Foreground="White" 
                                     FontWeight="SemiBold"
                                     Margin="0,0,10,0"
-                                    Click="ManageAdmins_Click"/>
+                                    Click="ManageStaffAndCustomers_Click"/>
                             
                             <Button Grid.Column="1" 
                                     Content="Quản lý Danh mục" 

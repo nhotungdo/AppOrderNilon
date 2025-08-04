@@ -134,10 +134,12 @@ F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\bin\Debug\net8.0-windows\runtimes\w
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\bin\Debug\net8.0-windows\runtimes\win\lib\net6.0\System.Runtime.Caching.dll
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\bin\Debug\net8.0-windows\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\AppOrderNilon.csproj.AssemblyReference.cache
+F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\MainWindow.baml
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\AdminFormWindow.baml
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\AdminManagementWindow.baml
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\CategoryFormWindow.baml
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\CategoryManagementWindow.baml
+F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\CreateOrderWindow.baml
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\CustomerDashboardWindow.baml
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\CustomerDetailWindow.baml
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\CustomerFormWindow.baml
@@ -159,10 +161,12 @@ F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\Staf
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\SupplierFormWindow.baml
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\SupplierManagementWindow.baml
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\SystemSettingsWindow.baml
+F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\MainWindow.g.cs
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\AdminFormWindow.g.cs
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\AdminManagementWindow.g.cs
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\CategoryFormWindow.g.cs
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\CategoryManagementWindow.g.cs
+F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\CreateOrderWindow.g.cs
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\CustomerDashboardWindow.g.cs
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\CustomerDetailWindow.g.cs
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\Views\CustomerFormWindow.g.cs

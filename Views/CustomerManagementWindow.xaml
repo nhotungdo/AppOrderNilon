@@ -14,7 +14,7 @@
         </Grid.RowDefinitions>
         
         <!-- Header -->
-        <Border Grid.Row="0" Background="#FF9800" Padding="15">
+        <Border Grid.Row="0" Background="#2196F3" Padding="15">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>

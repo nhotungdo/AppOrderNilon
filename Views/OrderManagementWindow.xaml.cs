@@ -41,13 +41,13 @@ namespace AppOrderNilon.Views
             }
             catch (Exception ex)
             {
+                // Log error for debugging
+                System.Diagnostics.Debug.WriteLine($"Database error in OrderManagement: {ex.Message}");
+                
                 // Fallback to sample data if database is not available
                 LoadSampleData();
                 RefreshOrderGrid();
                 UpdateStatusBar();
-
-                // Log error but don't show popup to user
-                System.Diagnostics.Debug.WriteLine($"Database connection failed in OrderManagement: {ex.Message}");
             }
         }
 
@@ -186,30 +186,11 @@ namespace AppOrderNilon.Views
         {
             try
             {
-                OrderDetailWindow orderDetailWindow = new OrderDetailWindow(null, customers, staff);
-                if (orderDetailWindow.ShowDialog() == true)
-                {
-                    // Get the created order
-                    var createdOrder = orderDetailWindow.CreatedOrder;
-                    if (createdOrder != null)
-                    {
-                        // Add the new order to the list
-                        allOrders.Insert(0, createdOrder); // Insert at the beginning
+                CreateOrderWindow createOrderWindow = new CreateOrderWindow();
+                createOrderWindow.ShowDialog();
 
-                        // Refresh the grid and status bar
-                        RefreshOrderGrid();
-                        UpdateStatusBar();
-
-                        // Show success message
-                        MessageBox.Show($"Đơn hàng #{createdOrder.OrderId} đã được thêm vào danh sách!", "Thông báo",
-                            MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
-                    else
-                    {
-                        // If no order was created, reload data from database
-                        LoadData();
-                    }
-                }
+                // Refresh order list after creating new order
+                LoadData();
             }
             catch (Exception ex)
             {
@@ -245,25 +226,19 @@ namespace AppOrderNilon.Views
                         var updatedOrder = orderDetailWindow.CreatedOrder;
                         if (updatedOrder != null)
                         {
-                            // Update the order in the list
-                            var index = allOrders.FindIndex(o => o.OrderId == selectedOrder.OrderId);
-                            if (index >= 0)
+                            // Update the order in database
+                            bool success = _orderService.UpdateOrder(updatedOrder, updatedOrder.OrderDetails?.ToList() ?? new List<OrderDetail>());
+                            if (success)
                             {
-                                allOrders[index] = updatedOrder;
+                                MessageBox.Show($"Đơn hàng #{updatedOrder.OrderId} đã được cập nhật!", "Thông báo",
+                                    MessageBoxButton.OK, MessageBoxImage.Information);
+                                LoadData(); // Reload data from database
                             }
-
-                            // Refresh the grid and status bar
-                            RefreshOrderGrid();
-                            UpdateStatusBar();
-
-                            // Show success message
-                            MessageBox.Show($"Đơn hàng #{updatedOrder.OrderId} đã được cập nhật!", "Thông báo",
-                                MessageBoxButton.OK, MessageBoxImage.Information);
-                        }
-                        else
-                        {
-                            // If no order was updated, reload data from database
-                            LoadData();
+                            else
+                            {
+                                MessageBox.Show("Lỗi khi cập nhật đơn hàng!", "Lỗi",
+                                    MessageBoxButton.OK, MessageBoxImage.Error);
+                            }
                         }
                     }
                 }
@@ -294,15 +269,13 @@ namespace AppOrderNilon.Views
                         bool success = _orderService.DeleteOrder(selectedOrder.OrderId);
                         if (success)
                         {
-                            allOrders.Remove(selectedOrder);
-                            RefreshOrderGrid();
-                            UpdateStatusBar();
                             MessageBox.Show("Đã xóa đơn hàng thành công!", "Thông báo",
                                 MessageBoxButton.OK, MessageBoxImage.Information);
+                            LoadData(); // Reload data from database
                         }
                         else
                         {
-                            MessageBox.Show("Không thể xóa đơn hàng!", "Lỗi",
+                            MessageBox.Show("Lỗi khi xóa đơn hàng!", "Lỗi",
                                 MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     }

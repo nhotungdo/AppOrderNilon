@@ -1,7 +1,6 @@
 using System;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
 using AppOrderNilon.Models;
 using AppOrderNilon.Services;
 
@@ -9,163 +8,229 @@ namespace AppOrderNilon.Views
 {
     public partial class StaffFormWindow : Window
     {
-        private readonly StaffService _staffService;
-        private readonly AppOrderNilonContext _context;
-        private readonly Staff? _staff;
-        private readonly bool _isEditMode;
+        private AdminService _adminService;
+        private Staff _staff;
+        private bool _isEditMode;
+        private string _originalUsername;
 
-        public StaffFormWindow()
+        public Staff Staff => _staff;
+
+        public StaffFormWindow(Staff staff = null)
         {
             InitializeComponent();
-            _context = new AppOrderNilonContext();
-            _staffService = new StaffService(_context);
-            _isEditMode = false;
-            SetupForAdd();
+            _adminService = new AdminService();
+            _staff = staff ?? new Staff();
+            _isEditMode = staff != null;
+            _originalUsername = staff?.Username ?? "";
+
+            if (_isEditMode)
+            {
+                PopulateForm();
+                txtUsername.IsEnabled = false; // Username không được sửa trong edit mode
+            }
+
+            UpdateSaveButton();
         }
 
-        public StaffFormWindow(Staff staff)
+        private void PopulateForm()
         {
-            InitializeComponent();
-            _context = new AppOrderNilonContext();
-            _staffService = new StaffService(_context);
-            _staff = staff;
-            _isEditMode = true;
-            SetupForEdit();
+            txtUsername.Text = _staff.Username ?? "";
+            txtFullName.Text = _staff.FullName ?? "";
+            txtEmail.Text = _staff.Email ?? "";
+            txtPhone.Text = _staff.Phone ?? "";
         }
 
-        private void SetupForAdd()
+        private void UpdateSaveButton()
         {
-            txtTitle.Text = "THÊM NHÂN VIÊN MỚI";
-            gridChangePassword.Visibility = Visibility.Collapsed;
-            gridNewPassword.Visibility = Visibility.Collapsed;
+            bool isValid = ValidateForm();
+            btnSave.IsEnabled = isValid;
         }
 
-        private void SetupForEdit()
+        private bool ValidateForm()
         {
-            txtTitle.Text = "SỬA NHÂN VIÊN";
-            txtUsername.Text = _staff?.Username ?? "";
-            txtFullName.Text = _staff?.FullName ?? "";
-            txtEmail.Text = _staff?.Email ?? "";
-            txtPhone.Text = _staff?.Phone ?? "";
+            // Clear previous validation message
+            txtValidationMessage.Text = "";
 
-            // Disable username field in edit mode
-            txtUsername.IsEnabled = false;
-            txtPassword.IsEnabled = false;
+            // Check required fields
+            if (string.IsNullOrWhiteSpace(txtUsername.Text))
+            {
+                txtValidationMessage.Text = "Username là bắt buộc.";
+                return false;
+            }
 
-            gridChangePassword.Visibility = Visibility.Visible;
-            gridNewPassword.Visibility = Visibility.Collapsed;
+            if (!_isEditMode && string.IsNullOrWhiteSpace(txtPassword.Password))
+            {
+                txtValidationMessage.Text = "Password là bắt buộc.";
+                return false;
+            }
+
+            if (!_isEditMode && txtPassword.Password != txtConfirmPassword.Password)
+            {
+                txtValidationMessage.Text = "Password và xác nhận password không khớp.";
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtFullName.Text))
+            {
+                txtValidationMessage.Text = "Họ và tên là bắt buộc.";
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtEmail.Text))
+            {
+                txtValidationMessage.Text = "Email là bắt buộc.";
+                return false;
+            }
+
+            // Validate email format
+            if (!IsValidEmail(txtEmail.Text))
+            {
+                txtValidationMessage.Text = "Email không hợp lệ.";
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtPhone.Text))
+            {
+                txtValidationMessage.Text = "Số điện thoại là bắt buộc.";
+                return false;
+            }
+
+            // Validate phone format
+            if (!IsValidPhone(txtPhone.Text))
+            {
+                txtValidationMessage.Text = "Số điện thoại không hợp lệ.";
+                return false;
+            }
+
+            return true;
         }
 
-        private void ChkChangePassword_Checked(object sender, RoutedEventArgs e)
-        {
-            gridNewPassword.Visibility = Visibility.Visible;
-        }
-
-        private void ChkChangePassword_Unchecked(object sender, RoutedEventArgs e)
-        {
-            gridNewPassword.Visibility = Visibility.Collapsed;
-            txtNewPassword.Password = "";
-        }
-
-        private async void BtnSave_Click(object sender, RoutedEventArgs e)
+        private bool IsValidEmail(string email)
         {
             try
             {
-                // Validation
-                if (string.IsNullOrWhiteSpace(txtUsername.Text))
-                {
-                    MessageBox.Show("Vui lòng nhập username.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    txtUsername.Focus();
-                    return;
-                }
+                var regex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+                return regex.IsMatch(email);
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
-                if (string.IsNullOrWhiteSpace(txtFullName.Text))
-                {
-                    MessageBox.Show("Vui lòng nhập họ tên.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    txtFullName.Focus();
-                    return;
-                }
+        private bool IsValidPhone(string phone)
+        {
+            try
+            {
+                var regex = new Regex(@"^[0-9]{10,11}$");
+                return regex.IsMatch(phone.Replace(" ", ""));
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
-                if (!_isEditMode && string.IsNullOrWhiteSpace(txtPassword.Password))
-                {
-                    MessageBox.Show("Vui lòng nhập password.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    txtPassword.Focus();
-                    return;
-                }
+        private void txtUsername_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            UpdateSaveButton();
+        }
 
-                if (_isEditMode && chkChangePassword.IsChecked == true && string.IsNullOrWhiteSpace(txtNewPassword.Password))
-                {
-                    MessageBox.Show("Vui lòng nhập password mới.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    txtNewPassword.Focus();
-                    return;
-                }
+        private void txtPassword_PasswordChanged(object sender, System.Windows.RoutedEventArgs e)
+        {
+            UpdateSaveButton();
+        }
 
-                if (_isEditMode && _staff != null)
-                {
-                    // Update existing staff
-                    _staff.Username = txtUsername.Text.Trim();
-                    _staff.FullName = txtFullName.Text.Trim();
-                    _staff.Email = txtEmail.Text.Trim();
-                    _staff.Phone = txtPhone.Text.Trim();
+        private void txtConfirmPassword_PasswordChanged(object sender, System.Windows.RoutedEventArgs e)
+        {
+            UpdateSaveButton();
+        }
 
-                    string? newPassword = null;
-                    if (chkChangePassword.IsChecked == true)
+        private void txtFullName_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            UpdateSaveButton();
+        }
+
+        private void txtEmail_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            UpdateSaveButton();
+        }
+
+        private void txtPhone_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            UpdateSaveButton();
+        }
+
+        private async void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            if (!ValidateForm())
+                return;
+
+            try
+            {
+                // Check if username already exists (except for current staff in edit mode)
+                if (!_isEditMode || txtUsername.Text != _originalUsername)
+                {
+                    bool usernameExists = await _adminService.IsUsernameExistsAsync(txtUsername.Text);
+                    if (usernameExists)
                     {
-                        newPassword = txtNewPassword.Password;
+                        txtValidationMessage.Text = "Username đã tồn tại. Vui lòng chọn username khác.";
+                        return;
                     }
+                }
 
-                    var success = await _staffService.UpdateStaffAsync(_staff, newPassword);
-                    if (success)
-                    {
-                        MessageBox.Show("Cập nhật nhân viên thành công!", "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
-                        DialogResult = true;
-                        Close();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Không thể cập nhật nhân viên.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                // Populate staff object
+                _staff.Username = txtUsername.Text.Trim();
+                _staff.FullName = txtFullName.Text.Trim();
+                _staff.Email = txtEmail.Text.Trim();
+                _staff.Phone = txtPhone.Text.Trim();
+
+                // Handle password
+                if (!_isEditMode || !string.IsNullOrEmpty(txtPassword.Password))
+                {
+                    _staff.PasswordHash = HashPassword(txtPassword.Password);
+                }
+
+                // Save to database
+                bool success;
+                if (_isEditMode)
+                {
+                    success = await _adminService.UpdateStaffAsync(_staff);
                 }
                 else
                 {
-                    // Create new staff
-                    var newStaff = new Staff
-                    {
-                        Username = txtUsername.Text.Trim(),
-                        FullName = txtFullName.Text.Trim(),
-                        Email = txtEmail.Text.Trim(),
-                        Phone = txtPhone.Text.Trim()
-                    };
+                    success = await _adminService.CreateStaffAsync(_staff);
+                }
 
-                    var success = await _staffService.CreateStaffAsync(newStaff, txtPassword.Password);
-                    if (success)
-                    {
-                        MessageBox.Show("Thêm nhân viên thành công!", "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
-                        DialogResult = true;
-                        Close();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Không thể thêm nhân viên.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                if (success)
+                {
+                    MessageBox.Show(_isEditMode ? "Cập nhật Staff thành công!" : "Thêm Staff thành công!",
+                        "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                    this.DialogResult = true;
+                    this.Close();
+                }
+                else
+                {
+                    txtValidationMessage.Text = _isEditMode ? "Lỗi khi cập nhật Staff." : "Lỗi khi thêm Staff.";
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                txtValidationMessage.Text = $"Lỗi: {ex.Message}";
             }
         }
 
-        private void BtnCancel_Click(object sender, RoutedEventArgs e)
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = false;
-            Close();
+            this.DialogResult = false;
+            this.Close();
         }
 
-        protected override void OnClosed(EventArgs e)
+        private string HashPassword(string password)
         {
-            _context?.Dispose();
-            base.OnClosed(e);
+            using var sha256 = System.Security.Cryptography.SHA256.Create();
+            var hashedBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            return Convert.ToBase64String(hashedBytes);
         }
     }
 }

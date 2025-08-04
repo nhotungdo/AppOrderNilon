@@ -26,7 +26,7 @@ namespace AppOrderNilon.Views
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                MessageBox.Show("Vui lòng nhập đầy đủ thông tin đăng nhập!", "Thông báo", 
+                MessageBox.Show("Vui lòng nhập đầy đủ thông tin đăng nhập!", "Thông báo",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
@@ -34,7 +34,7 @@ namespace AppOrderNilon.Views
             // Validate input
             if (username.Length < 3)
             {
-                MessageBox.Show("Tên đăng nhập phải có ít nhất 3 ký tự!", "Lỗi", 
+                MessageBox.Show("Tên đăng nhập phải có ít nhất 3 ký tự!", "Lỗi",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 txtUsername.Focus();
                 return;
@@ -42,7 +42,7 @@ namespace AppOrderNilon.Views
 
             if (password.Length < 6)
             {
-                MessageBox.Show("Mật khẩu phải có ít nhất 6 ký tự!", "Lỗi", 
+                MessageBox.Show("Mật khẩu phải có ít nhất 6 ký tự!", "Lỗi",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 txtPassword.Focus();
                 return;
@@ -54,16 +54,16 @@ namespace AppOrderNilon.Views
                 if (AuthenticateUser(username, password, out string userRole, out object user))
                 {
                     string displayName = GetDisplayName(user, userRole);
-                    MessageBox.Show($"Đăng nhập thành công!\n\nChào mừng {displayName}\nRole: {userRole}", "Thông báo", 
+                    MessageBox.Show($"Đăng nhập thành công!\n\nChào mừng {displayName}\nRole: {userRole}", "Thông báo",
                         MessageBoxButton.OK, MessageBoxImage.Information);
-                    
+
                     // Open appropriate dashboard based on role
                     OpenDashboard(userRole, user);
                     this.Close();
                 }
                 else
                 {
-                    MessageBox.Show("Tên đăng nhập hoặc mật khẩu không đúng!\n\nTài khoản mẫu:\n- Admin: admin1/123456\n- Staff: staff1/123456\n- Customer: customer1/123456", "Lỗi", 
+                    MessageBox.Show("Tên đăng nhập hoặc mật khẩu không đúng!\n\nTài khoản mẫu:\n- Admin: admin1/123456\n- Staff: staff1/123456\n- Customer: customer1/123456", "Lỗi",
                         MessageBoxButton.OK, MessageBoxImage.Error);
                     txtPassword.Clear();
                     txtPassword.Focus();
@@ -71,7 +71,7 @@ namespace AppOrderNilon.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi đăng nhập: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi đăng nhập: {ex.Message}", "Lỗi",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -84,7 +84,7 @@ namespace AppOrderNilon.Views
             try
             {
                 // Try database authentication first
-                
+
                 // Admin authentication
                 var admin = _adminService.AuthenticateAdmin(username, password);
                 if (admin != null)
@@ -125,65 +125,65 @@ namespace AppOrderNilon.Views
                 userRole = "Admin";
                 if (username == "admin1")
                 {
-                    user = new Admin 
-                    { 
-                        AdminId = 1, 
-                        Username = "admin1", 
-                        FullName = "Nguyễn Quản Trị", 
-                        Email = "admin1@app.com" 
+                    user = new Admin
+                    {
+                        AdminId = 1,
+                        Username = "admin1",
+                        FullName = "Nguyễn Quản Trị",
+                        Email = "admin1@app.com"
                     };
                 }
                 else
                 {
-                    user = new Admin 
-                    { 
-                        AdminId = 2, 
-                        Username = "admin2", 
-                        FullName = "Lê Quản Trị", 
-                        Email = "admin2@app.com" 
+                    user = new Admin
+                    {
+                        AdminId = 2,
+                        Username = "admin2",
+                        FullName = "Lê Quản Trị",
+                        Email = "admin2@app.com"
                     };
                 }
                 return true;
             }
-            
+
             // Staff authentication
             if ((username == "staff1" || username == "staff2") && password == "123456")
             {
                 userRole = "Staff";
                 if (username == "staff1")
                 {
-                    user = new Staff 
-                    { 
-                        StaffId = 1, 
-                        Username = "staff1", 
-                        FullName = "Trần Nhân Viên", 
-                        Email = "staff1@app.com" 
+                    user = new Staff
+                    {
+                        StaffId = 1,
+                        Username = "staff1",
+                        FullName = "Trần Nhân Viên",
+                        Email = "staff1@app.com"
                     };
                 }
                 else
                 {
-                    user = new Staff 
-                    { 
-                        StaffId = 2, 
-                        Username = "staff2", 
-                        FullName = "Phạm Nhân Viên", 
-                        Email = "staff2@app.com" 
+                    user = new Staff
+                    {
+                        StaffId = 2,
+                        Username = "staff2",
+                        FullName = "Phạm Nhân Viên",
+                        Email = "staff2@app.com"
                     };
                 }
                 return true;
             }
-            
+
             // Customer authentication
             if ((username == "customer1" || username == "customer2") && password == "123456")
             {
                 userRole = "Customer";
                 if (username == "customer1")
                 {
-                    user = new Customer 
-                    { 
-                        CustomerId = 1, 
-                        Username = "customer1", 
-                        CustomerName = "Công ty Xây dựng Minh Anh", 
+                    user = new Customer
+                    {
+                        CustomerId = 1,
+                        Username = "customer1",
+                        CustomerName = "Công ty Xây dựng Minh Anh",
                         Email = "minhanh@construction.com",
                         Phone = "0987654321",
                         Address = "789 Đường Láng, Hà Nội"
@@ -191,11 +191,11 @@ namespace AppOrderNilon.Views
                 }
                 else
                 {
-                    user = new Customer 
-                    { 
-                        CustomerId = 2, 
-                        Username = "customer2", 
-                        CustomerName = "Lê Văn C", 
+                    user = new Customer
+                    {
+                        CustomerId = 2,
+                        Username = "customer2",
+                        CustomerName = "Lê Văn C",
                         Email = "levanc@gmail.com",
                         Phone = "0971234567",
                         Address = "123 Đường Nguyễn Trãi, Hà Nội"
@@ -232,26 +232,26 @@ namespace AppOrderNilon.Views
                         DashboardWindow adminDashboard = new DashboardWindow(user as Admin);
                         adminDashboard.Show();
                         break;
-                        
+
                     case "Staff":
                         StaffDashboardWindow staffDashboard = new StaffDashboardWindow(user as Staff);
                         staffDashboard.Show();
                         break;
-                        
+
                     case "Customer":
                         CustomerDashboardWindow customerDashboard = new CustomerDashboardWindow(user as Customer);
                         customerDashboard.Show();
                         break;
-                        
+
                     default:
-                        MessageBox.Show("Role không hợp lệ!", "Lỗi", 
+                        MessageBox.Show("Role không hợp lệ!", "Lỗi",
                             MessageBoxButton.OK, MessageBoxImage.Error);
                         break;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi mở dashboard: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi mở dashboard: {ex.Message}", "Lỗi",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -266,14 +266,14 @@ namespace AppOrderNilon.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi mở form đăng ký: {ex.Message}", "Lỗi", 
+                MessageBox.Show($"Lỗi khi mở form đăng ký: {ex.Message}", "Lỗi",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void ForgotPassword_Click(object sender, MouseButtonEventArgs e)
         {
-            MessageBox.Show("Chức năng quên mật khẩu sẽ được implement sau!\n\nLiên hệ admin để được hỗ trợ.", "Thông báo", 
+            MessageBox.Show("Chức năng quên mật khẩu sẽ được implement sau!\n\nLiên hệ admin để được hỗ trợ.", "Thông báo",
                 MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
@@ -294,10 +294,25 @@ namespace AppOrderNilon.Views
             }
         }
 
+        // Event handlers for text changes
+        private void txtUsername_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            // Enable/disable login button based on input
+            btnLogin.IsEnabled = !string.IsNullOrWhiteSpace(txtUsername.Text) &&
+                                !string.IsNullOrWhiteSpace(txtPassword.Password);
+        }
+
+        private void txtPassword_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            // Enable/disable login button based on input
+            btnLogin.IsEnabled = !string.IsNullOrWhiteSpace(txtUsername.Text) &&
+                                !string.IsNullOrWhiteSpace(txtPassword.Password);
+        }
+
         protected override void OnClosed(EventArgs e)
         {
             _adminService?.Dispose();
             base.OnClosed(e);
         }
     }
-} 
+}

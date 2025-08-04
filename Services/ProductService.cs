@@ -45,9 +45,9 @@ namespace AppOrderNilon.Services
                 .Include(p => p.Category)
                 .Include(p => p.Supplier)
                 .Where(p => p.ProductName.Contains(searchTerm) ||
-                           p.Description.Contains(searchTerm) ||
-                           p.Category.CategoryName.Contains(searchTerm) ||
-                           p.Supplier.SupplierName.Contains(searchTerm))
+                           (p.Description != null && p.Description.Contains(searchTerm)) ||
+                           (p.Category != null && p.Category.CategoryName.Contains(searchTerm)) ||
+                           (p.Supplier != null && p.Supplier.SupplierName.Contains(searchTerm)))
                 .OrderBy(p => p.ProductName)
                 .ToListAsync();
         }

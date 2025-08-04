@@ -104,16 +104,68 @@ namespace AppOrderNilon.Views
 
         private void CreateProduct()
         {
-            // TODO: Save to database
-            MessageBox.Show("Sản phẩm đã được tạo thành công!", "Thông báo", 
-                MessageBoxButton.OK, MessageBoxImage.Information);
+            currentProduct = new Product();
+            PopulateProductFromForm();
         }
 
         private void UpdateProduct()
         {
-            // TODO: Update in database
-            MessageBox.Show("Sản phẩm đã được cập nhật thành công!", "Thông báo", 
-                MessageBoxButton.OK, MessageBoxImage.Information);
+            PopulateProductFromForm();
+        }
+
+        private void PopulateProductFromForm()
+        {
+            currentProduct.ProductName = txtProductName.Text.Trim();
+            currentProduct.Description = txtDescription.Text.Trim();
+            currentProduct.Size = txtSize.Text.Trim();
+            currentProduct.ImagePath = txtImagePath.Text.Trim();
+
+            // Parse thickness
+            if (decimal.TryParse(txtThickness.Text, out decimal thickness))
+            {
+                currentProduct.Thickness = thickness;
+            }
+
+            // Parse unit price
+            if (decimal.TryParse(txtUnitPrice.Text, out decimal unitPrice))
+            {
+                currentProduct.UnitPrice = unitPrice;
+            }
+
+            // Parse stock quantity
+            if (int.TryParse(txtStockQuantity.Text, out int stockQuantity))
+            {
+                currentProduct.StockQuantity = stockQuantity;
+            }
+
+            // Set category
+            if (cmbCategory.SelectedItem != null)
+            {
+                string categoryName = cmbCategory.SelectedItem.ToString();
+                var category = categories.FirstOrDefault(c => c.CategoryName == categoryName);
+                if (category != null)
+                {
+                    currentProduct.CategoryId = category.CategoryId;
+                    currentProduct.Category = category;
+                }
+            }
+
+            // Set supplier
+            if (cmbSupplier.SelectedItem != null)
+            {
+                string supplierName = cmbSupplier.SelectedItem.ToString();
+                var supplier = suppliers.FirstOrDefault(s => s.SupplierName == supplierName);
+                if (supplier != null)
+                {
+                    currentProduct.SupplierId = supplier.SupplierId;
+                    currentProduct.Supplier = supplier;
+                }
+            }
+        }
+
+        public Product GetProduct()
+        {
+            return currentProduct;
         }
 
         private bool ValidateInputs()

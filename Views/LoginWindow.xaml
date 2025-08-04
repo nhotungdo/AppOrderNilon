@@ -53,7 +53,7 @@
                            Margin="0,0,0,30"/>
                 
                 <!-- Email/Phone Input -->
-                <TextBlock Text="Email or Phone" 
+                <TextBlock Text="UserName" 
                            FontWeight="SemiBold" 
                            Foreground="#666666"
                            Margin="0,0,0,8"/>
@@ -66,7 +66,8 @@
                          BorderThickness="2"
                          Background="#FAFAFA"
                          VerticalContentAlignment="Center"
-                         Style="{StaticResource ModernTextBox}"/>
+                         Style="{StaticResource ModernTextBox}"
+                         TextChanged="txtUsername_TextChanged"/>
                 
                 <!-- Password Input -->
                 <TextBlock Text="Password" 
@@ -82,7 +83,8 @@
                              BorderThickness="2"
                              Background="#FAFAFA"
                              VerticalContentAlignment="Center"
-                             Style="{StaticResource ModernPasswordBox}"/>
+                             Style="{StaticResource ModernPasswordBox}"
+                             PasswordChanged="txtPassword_PasswordChanged"/>
                 
                 <!-- Keep me signed in & Reset Password -->
                 <Grid Margin="0,0,0,30">
@@ -118,7 +120,7 @@
                 
                 <!-- Login Button -->
                 <Button x:Name="btnLogin" 
-                        Content="Open Sesame" 
+                        Content="Login" 
                         Height="55" 
                         FontSize="18" 
                         FontWeight="Bold"
@@ -153,7 +155,8 @@
                         </Style>
                     </Button.Style>
                 </Button>
-                
+
+
                 <!-- Register Link -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="New to our website? " 

@@ -258,6 +258,27 @@ namespace AppOrderNilon.Services
             }
         }
 
+        public async Task<bool> CreateAdminAsync(Admin admin)
+        {
+            try
+            {
+                // Validate username uniqueness
+                if (await _context.Admins.AnyAsync(a => a.Username == admin.Username))
+                {
+                    return false;
+                }
+
+                admin.PasswordHash = HashPassword(admin.PasswordHash); // Assuming PasswordHash contains plain password
+                _context.Admins.Add(admin);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public bool UpdateAdmin(Admin admin)
         {
             try
@@ -292,6 +313,40 @@ namespace AppOrderNilon.Services
             }
         }
 
+        public async Task<bool> UpdateAdminAsync(Admin admin)
+        {
+            try
+            {
+                var existingAdmin = await _context.Admins.FindAsync(admin.AdminId);
+                if (existingAdmin == null) return false;
+
+                // Check if username is being changed and if it's already taken
+                if (admin.Username != existingAdmin.Username &&
+                    await _context.Admins.AnyAsync(a => a.Username == admin.Username))
+                {
+                    return false;
+                }
+
+                existingAdmin.Username = admin.Username;
+                existingAdmin.FullName = admin.FullName;
+                existingAdmin.Email = admin.Email;
+                existingAdmin.Phone = admin.Phone;
+
+                // Only update password if provided
+                if (!string.IsNullOrEmpty(admin.PasswordHash))
+                {
+                    existingAdmin.PasswordHash = HashPassword(admin.PasswordHash);
+                }
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public bool DeleteAdmin(int adminId)
         {
             try
@@ -307,6 +362,29 @@ namespace AppOrderNilon.Services
 
                 _context.Admins.Remove(admin);
                 _context.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteAdminAsync(int adminId)
+        {
+            try
+            {
+                var admin = await _context.Admins.FindAsync(adminId);
+                if (admin == null) return false;
+
+                // Prevent deletion of the last admin
+                if (await _context.Admins.CountAsync() <= 1)
+                {
+                    return false;
+                }
+
+                _context.Admins.Remove(admin);
+                await _context.SaveChangesAsync();
                 return true;
             }
             catch
@@ -375,6 +453,27 @@ namespace AppOrderNilon.Services
             }
         }
 
+        public async Task<bool> CreateStaffAsync(Staff staff)
+        {
+            try
+            {
+                // Validate username uniqueness
+                if (await _context.Staff.AnyAsync(s => s.Username == staff.Username))
+                {
+                    return false;
+                }
+
+                staff.PasswordHash = HashPassword(staff.PasswordHash);
+                _context.Staff.Add(staff);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public bool UpdateStaff(Staff staff)
         {
             try
@@ -408,6 +507,39 @@ namespace AppOrderNilon.Services
             }
         }
 
+        public async Task<bool> UpdateStaffAsync(Staff staff)
+        {
+            try
+            {
+                var existingStaff = await _context.Staff.FindAsync(staff.StaffId);
+                if (existingStaff == null) return false;
+
+                // Check if username is being changed and if it's already taken
+                if (staff.Username != existingStaff.Username &&
+                    await _context.Staff.AnyAsync(s => s.Username == staff.Username))
+                {
+                    return false;
+                }
+
+                existingStaff.Username = staff.Username;
+                existingStaff.FullName = staff.FullName;
+                existingStaff.Email = staff.Email;
+                existingStaff.Phone = staff.Phone;
+
+                if (!string.IsNullOrEmpty(staff.PasswordHash))
+                {
+                    existingStaff.PasswordHash = HashPassword(staff.PasswordHash);
+                }
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public bool DeleteStaff(int staffId)
         {
             try
@@ -418,6 +550,37 @@ namespace AppOrderNilon.Services
                 _context.Staff.Remove(staff);
                 _context.SaveChanges();
                 return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteStaffAsync(int staffId)
+        {
+            try
+            {
+                var staff = await _context.Staff.FindAsync(staffId);
+                if (staff == null) return false;
+
+                _context.Staff.Remove(staff);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> IsUsernameExistsAsync(string username)
+        {
+            try
+            {
+                return await _context.Admins.AnyAsync(a => a.Username == username) ||
+                       await _context.Staff.AnyAsync(s => s.Username == username) ||
+                       await _context.Customers.AnyAsync(c => c.Username == username);
             }
             catch
             {

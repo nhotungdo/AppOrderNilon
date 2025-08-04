@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using AppOrderNilon.Models;
+using AppOrderNilon.Services;
 
 namespace AppOrderNilon.Views
 {
@@ -12,20 +13,41 @@ namespace AppOrderNilon.Views
         private List<Product> allProducts;
         private List<Category> categories;
         private List<Supplier> suppliers;
+        private ProductService _productService;
+        private CategoryService _categoryService;
+        private SupplierService _supplierService;
 
         public ProductManagementWindow()
         {
             InitializeComponent();
+            var context = new AppOrderNilonContext();
+            _productService = new ProductService(context);
+            _categoryService = new CategoryService(context);
+            _supplierService = new SupplierService(context);
             LoadData();
         }
 
-        private void LoadData()
+        private async void LoadData()
         {
-            // TODO: Load data from database
-            // For now, using sample data
-            LoadSampleData();
-            RefreshProductGrid();
-            UpdateStatusBar();
+            try
+            {
+                // Load data from database
+                allProducts = await _productService.GetAllProductsAsync() ?? new List<Product>();
+                LoadCategories();
+                LoadSuppliers();
+                RefreshProductGrid();
+                UpdateStatusBar();
+            }
+            catch (Exception ex)
+            {
+                // Log error for debugging
+                System.Diagnostics.Debug.WriteLine($"Database error: {ex.Message}");
+                
+                // Fallback to sample data without showing error popup
+                LoadSampleData();
+                RefreshProductGrid();
+                UpdateStatusBar();
+            }
         }
 
         private void LoadSampleData()
@@ -87,12 +109,22 @@ namespace AppOrderNilon.Views
 
         private void LoadCategories()
         {
-            categories = new List<Category>
+            try
             {
-                new Category { CategoryId = 1, CategoryName = "Nilon xây dựng", Description = "Nilon lót sàn, bạt phủ công trình", Quantity = 100 },
-                new Category { CategoryId = 2, CategoryName = "Vật liệu bảo hộ", Description = "Mũ, găng tay, giày bảo hộ", Quantity = 205 },
-                new Category { CategoryId = 3, CategoryName = "Vật liệu xây dựng", Description = "Xi măng, gạch, thép", Quantity = 0 }
-            };
+                categories = _productService.GetAllCategories() ?? new List<Category>();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải danh mục: {ex.Message}", "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                // Fallback to sample data
+                categories = new List<Category>
+                {
+                    new Category { CategoryId = 1, CategoryName = "Nilon xây dựng", Description = "Nilon lót sàn, bạt phủ công trình", Quantity = 100 },
+                    new Category { CategoryId = 2, CategoryName = "Vật liệu bảo hộ", Description = "Mũ, găng tay, giày bảo hộ", Quantity = 205 },
+                    new Category { CategoryId = 3, CategoryName = "Vật liệu xây dựng", Description = "Xi măng, gạch, thép", Quantity = 0 }
+                };
+            }
 
             cmbCategory.Items.Clear();
             cmbCategory.Items.Add("Tất cả danh mục");
@@ -105,11 +137,21 @@ namespace AppOrderNilon.Views
 
         private void LoadSuppliers()
         {
-            suppliers = new List<Supplier>
+            try
             {
-                new Supplier { SupplierId = 1, SupplierName = "Công ty Nilon ABC", ContactName = "Nguyễn Văn A", Phone = "0901234567", Email = "abc@nilon.com", Address = "123 Đường Láng, Hà Nội" },
-                new Supplier { SupplierId = 2, SupplierName = "Công ty Bảo Hộ XYZ", ContactName = "Trần Thị B", Phone = "0912345678", Email = "xyz@baoho.com", Address = "456 Đường Giải Phóng, Hà Nội" }
-            };
+                suppliers = _productService.GetAllSuppliers() ?? new List<Supplier>();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải nhà cung cấp: {ex.Message}", "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                // Fallback to sample data
+                suppliers = new List<Supplier>
+                {
+                    new Supplier { SupplierId = 1, SupplierName = "Công ty Nilon ABC", ContactName = "Nguyễn Văn A", Phone = "0901234567", Email = "abc@nilon.com", Address = "123 Đường Láng, Hà Nội" },
+                    new Supplier { SupplierId = 2, SupplierName = "Công ty Bảo Hộ XYZ", ContactName = "Trần Thị B", Phone = "0912345678", Email = "xyz@baoho.com", Address = "456 Đường Giải Phóng, Hà Nội" }
+                };
+            }
         }
 
         private void RefreshProductGrid()
@@ -179,25 +221,70 @@ namespace AppOrderNilon.Views
             // Handle product selection if needed
         }
 
-        private void AddProduct_Click(object sender, RoutedEventArgs e)
+        private async void AddProduct_Click(object sender, RoutedEventArgs e)
         {
             ProductDetailWindow productDetailWindow = new ProductDetailWindow(null, categories, suppliers);
             if (productDetailWindow.ShowDialog() == true)
             {
-                // TODO: Add new product to database
-                LoadData(); // Reload data
+                try
+                {
+                    var newProduct = productDetailWindow.GetProduct();
+                    if (newProduct != null)
+                    {
+                        bool success = await _productService.CreateProductAsync(newProduct);
+                        if (success)
+                        {
+                            MessageBox.Show("Thêm sản phẩm thành công!", "Thông báo",
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+                            LoadData(); // Reload data from database
+                        }
+                        else
+                        {
+                            MessageBox.Show("Lỗi khi thêm sản phẩm!", "Lỗi",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi thêm sản phẩm: {ex.Message}", "Lỗi",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
-        private void EditProduct_Click(object sender, RoutedEventArgs e)
+        private async void EditProduct_Click(object sender, RoutedEventArgs e)
         {
             if (dgProducts.SelectedItem is Product selectedProduct)
             {
                 ProductDetailWindow productDetailWindow = new ProductDetailWindow(selectedProduct, categories, suppliers);
                 if (productDetailWindow.ShowDialog() == true)
                 {
-                    // TODO: Update product in database
-                    LoadData(); // Reload data
+                    try
+                    {
+                        var updatedProduct = productDetailWindow.GetProduct();
+                        if (updatedProduct != null)
+                        {
+                            updatedProduct.ProductId = selectedProduct.ProductId; // Ensure ID is preserved
+                            bool success = await _productService.UpdateProductAsync(updatedProduct);
+                            if (success)
+                            {
+                                MessageBox.Show("Cập nhật sản phẩm thành công!", "Thông báo",
+                                    MessageBoxButton.OK, MessageBoxImage.Information);
+                                LoadData(); // Reload data from database
+                            }
+                            else
+                            {
+                                MessageBox.Show("Lỗi khi cập nhật sản phẩm!", "Lỗi",
+                                    MessageBoxButton.OK, MessageBoxImage.Error);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Lỗi khi cập nhật sản phẩm: {ex.Message}", "Lỗi",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
             else
@@ -207,7 +294,7 @@ namespace AppOrderNilon.Views
             }
         }
 
-        private void DeleteProduct_Click(object sender, RoutedEventArgs e)
+        private async void DeleteProduct_Click(object sender, RoutedEventArgs e)
         {
             if (dgProducts.SelectedItem is Product selectedProduct)
             {
@@ -216,12 +303,26 @@ namespace AppOrderNilon.Views
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    // TODO: Delete product from database
-                    allProducts.Remove(selectedProduct);
-                    RefreshProductGrid();
-                    UpdateStatusBar();
-                    MessageBox.Show("Đã xóa sản phẩm thành công!", "Thông báo",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    try
+                    {
+                        bool success = await _productService.DeleteProductAsync(selectedProduct.ProductId);
+                        if (success)
+                        {
+                            MessageBox.Show("Đã xóa sản phẩm thành công!", "Thông báo",
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+                            LoadData(); // Reload data from database
+                        }
+                        else
+                        {
+                            MessageBox.Show("Lỗi khi xóa sản phẩm!", "Lỗi",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Lỗi khi xóa sản phẩm: {ex.Message}", "Lỗi",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
             else

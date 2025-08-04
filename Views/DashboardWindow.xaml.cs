@@ -137,8 +137,7 @@ namespace AppOrderNilon.Views
             try
             {
                 ProductManagementWindow productWindow = new ProductManagementWindow();
-                productWindow.Show();
-                this.Hide();
+                productWindow.ShowDialog();
             }
             catch (System.Exception ex)
             {
@@ -152,8 +151,7 @@ namespace AppOrderNilon.Views
             try
             {
                 OrderManagementWindow orderWindow = new OrderManagementWindow();
-                orderWindow.Show();
-                this.Hide();
+                orderWindow.ShowDialog();
             }
             catch (System.Exception ex)
             {
@@ -167,8 +165,7 @@ namespace AppOrderNilon.Views
             try
             {
                 CustomerManagementWindow customerWindow = new CustomerManagementWindow();
-                customerWindow.Show();
-                this.Hide();
+                customerWindow.ShowDialog();
             }
             catch (System.Exception ex)
             {
@@ -182,8 +179,7 @@ namespace AppOrderNilon.Views
             try
             {
                 ReportWindow reportWindow = new ReportWindow();
-                reportWindow.Show();
-                this.Hide();
+                reportWindow.ShowDialog();
             }
             catch (System.Exception ex)
             {
@@ -192,17 +188,36 @@ namespace AppOrderNilon.Views
             }
         }
 
-        private void ManageAdmins_Click(object sender, RoutedEventArgs e)
+        private void ManageStaffAndCustomers_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                AdminManagementWindow adminWindow = new AdminManagementWindow();
-                adminWindow.Show();
-                this.Hide();
+                // Tạo một window mới để quản lý cả Staff và Customer
+                var result = MessageBox.Show("Chọn loại quản lý:\n\n" +
+                    "• Nhấn 'Yes' để mở Quản lý Staff\n" +
+                    "• Nhấn 'No' để mở Quản lý Customer\n" +
+                    "• Nhấn 'Cancel' để hủy", 
+                    "Chọn chức năng", 
+                    MessageBoxButton.YesNoCancel, 
+                    MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    // Mở quản lý Staff
+                    StaffManagementWindow staffWindow = new StaffManagementWindow();
+                    staffWindow.ShowDialog();
+                }
+                else if (result == MessageBoxResult.No)
+                {
+                    // Mở quản lý Customer
+                    CustomerManagementWindow customerWindow = new CustomerManagementWindow();
+                    customerWindow.ShowDialog();
+                }
+                // Nếu Cancel thì không làm gì
             }
             catch (System.Exception ex)
             {
-                MessageBox.Show($"Lỗi khi mở quản lý admin: {ex.Message}", "Lỗi",
+                MessageBox.Show($"Lỗi khi mở quản lý: {ex.Message}", "Lỗi",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -211,9 +226,8 @@ namespace AppOrderNilon.Views
         {
             try
             {
-                SystemSettingsWindow settingsWindow = new SystemSettingsWindow();
-                settingsWindow.Show();
-                this.Hide();
+                MessageBox.Show("Chức năng cài đặt hệ thống sẽ được triển khai trong phiên bản tiếp theo!", "Thông báo",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (System.Exception ex)
             {
@@ -227,8 +241,7 @@ namespace AppOrderNilon.Views
             try
             {
                 CategoryManagementWindow categoryWindow = new CategoryManagementWindow();
-                categoryWindow.Show();
-                this.Hide();
+                categoryWindow.ShowDialog();
             }
             catch (System.Exception ex)
             {
@@ -242,8 +255,7 @@ namespace AppOrderNilon.Views
             try
             {
                 StaffManagementWindow staffWindow = new StaffManagementWindow();
-                staffWindow.Show();
-                this.Hide();
+                staffWindow.ShowDialog();
             }
             catch (System.Exception ex)
             {
@@ -257,8 +269,7 @@ namespace AppOrderNilon.Views
             try
             {
                 SupplierManagementWindow supplierWindow = new SupplierManagementWindow();
-                supplierWindow.Show();
-                this.Hide();
+                supplierWindow.ShowDialog();
             }
             catch (System.Exception ex)
             {
@@ -272,8 +283,7 @@ namespace AppOrderNilon.Views
             try
             {
                 ReportManagementWindow reportWindow = new ReportManagementWindow();
-                reportWindow.Show();
-                this.Hide();
+                reportWindow.ShowDialog();
             }
             catch (System.Exception ex)
             {

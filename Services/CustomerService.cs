@@ -65,11 +65,11 @@ namespace AppOrderNilon.Services
 
             return await _context.Customers
                 .Include(c => c.Orders)
-                .Where(c => c.CustomerName.Contains(searchTerm) ||
-                           c.Phone.Contains(searchTerm) ||
-                           c.Email.Contains(searchTerm) ||
-                           c.Address.Contains(searchTerm) ||
-                           c.Notes.Contains(searchTerm))
+                .Where(c => (c.CustomerName != null && c.CustomerName.Contains(searchTerm)) ||
+                           (c.Phone != null && c.Phone.Contains(searchTerm)) ||
+                           (c.Email != null && c.Email.Contains(searchTerm)) ||
+                           (c.Address != null && c.Address.Contains(searchTerm)) ||
+                           (c.Notes != null && c.Notes.Contains(searchTerm)))
                 .OrderBy(c => c.CustomerName)
                 .ToListAsync();
         }
