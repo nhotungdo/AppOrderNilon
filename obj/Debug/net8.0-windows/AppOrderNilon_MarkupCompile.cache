@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP
 F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\App.xaml
-27-426803264
+38-1585089408
 
-501441317815
+61-1787424426
 229-1266511630
-MainWindow.xaml;Views\AdminFormWindow.xaml;Views\AdminManagementWindow.xaml;Views\CategoryFormWindow.xaml;Views\CategoryManagementWindow.xaml;Views\CreateOrderWindow.xaml;Views\CustomerDashboardWindow.xaml;Views\CustomerDetailWindow.xaml;Views\CustomerFormWindow.xaml;Views\CustomerManagementWindow.xaml;Views\DashboardWindow.xaml;Views\LoginWindow.xaml;Views\OrderDetailWindow.xaml;Views\OrderManagementWindow.xaml;Views\ProductDetailWindow.xaml;Views\ProductManagementWindow.xaml;Views\RegisterWindow.xaml;Views\ReportDetailWindow.xaml;Views\ReportFormWindow.xaml;Views\ReportManagementWindow.xaml;Views\ReportWindow.xaml;Views\StaffDashboardWindow.xaml;Views\StaffFormWindow.xaml;Views\StaffManagementWindow.xaml;Views\SupplierFormWindow.xaml;Views\SupplierManagementWindow.xaml;Views\SystemSettingsWindow.xaml;
+MainWindow.xaml;Views\AdminFormWindow.xaml;Views\AdminManagementWindow.xaml;Views\CategoryFormWindow.xaml;Views\CategoryManagementWindow.xaml;Views\CreateOrderWindow.xaml;Views\CustomerDashboardWindow.xaml;Views\CustomerDetailWindow.xaml;Views\CustomerFormWindow.xaml;Views\CustomerManagementWindow.xaml;Views\CustomerOrderManagementWindow.xaml;Views\CustomerProfileWindow.xaml;Views\CustomerPromotionWindow.xaml;Views\CustomerSupportWindow.xaml;Views\DashboardWindow.xaml;Views\LoginWindow.xaml;Views\OrderDetailWindow.xaml;Views\OrderManagementWindow.xaml;Views\ProductDetailWindow.xaml;Views\ProductManagementWindow.xaml;Views\RegisterWindow.xaml;Views\ReportDetailWindow.xaml;Views\ReportFormWindow.xaml;Views\ReportManagementWindow.xaml;Views\ReportWindow.xaml;Views\StaffCustomerManagementWindow.xaml;Views\StaffDashboardWindow.xaml;Views\StaffFormWindow.xaml;Views\StaffInventoryManagementWindow.xaml;Views\StaffManagementWindow.xaml;Views\StaffOrderManagementWindow.xaml;Views\StaffReportWindow.xaml;Views\StaffRestockRequestWindow.xaml;Views\StaffTaskFormWindow.xaml;Views\StaffTaskManagementWindow.xaml;Views\SupplierFormWindow.xaml;Views\SupplierManagementWindow.xaml;Views\SystemSettingsWindow.xaml;
 
 False
 

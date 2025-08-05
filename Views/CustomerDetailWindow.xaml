@@ -115,7 +115,7 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Mã đơn hàng" Binding="{Binding OrderId}" Width="100"/>
                         <DataGridTextColumn Header="Ngày đặt" Binding="{Binding OrderDate, StringFormat=dd/MM/yyyy}" Width="120"/>
-                        <DataGridTextColumn Header="Tổng tiền" Binding="{Binding TotalAmount, StringFormat=₫{0:N0}}" Width="120"/>
+                        <DataGridTextColumn Header="Tổng tiền" Binding="{Binding TotalAmount, StringFormat='₫{0:N0}'}" Width="120"/>
                         <DataGridTextColumn Header="Trạng thái" Binding="{Binding Status}" Width="100"/>
                         <DataGridTextColumn Header="Ghi chú" Binding="{Binding Notes}" Width="200"/>
                     </DataGrid.Columns>

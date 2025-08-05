@@ -244,9 +244,9 @@
                             
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Tên sản phẩm" Binding="{Binding ProductName}" Width="200"/>
-                                <DataGridTextColumn Header="Đơn giá" Binding="{Binding UnitPrice, StringFormat='{}{0:N0} VNĐ'}" Width="120"/>
+                                <DataGridTextColumn Header="Đơn giá" Binding="{Binding UnitPrice, StringFormat=N0 VNĐ}" Width="120"/>
                                 <DataGridTextColumn Header="Số lượng" Binding="{Binding Quantity}" Width="80"/>
-                                <DataGridTextColumn Header="Thành tiền" Binding="{Binding Subtotal, StringFormat='{}{0:N0} VNĐ'}" Width="120"/>
+                                <DataGridTextColumn Header="Thành tiền" Binding="{Binding Subtotal, StringFormat=N0 VNĐ}" Width="120"/>
                                 <DataGridTextColumn Header="Ghi chú" Binding="{Binding Notes}" Width="150"/>
                                 
                                 <DataGridTemplateColumn Header="Thao tác" Width="100">

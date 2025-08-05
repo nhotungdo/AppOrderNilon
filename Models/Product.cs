@@ -34,13 +34,15 @@ public partial class Product
     // Navigation properties for display
     public string CategoryName => Category?.CategoryName ?? "Unknown";
     public string SupplierName => Supplier?.SupplierName ?? "Unknown";
-    
+
     // Computed property for stock status
-    public string StockStatus 
-    { 
-        get 
+    public string StockStatus
+    {
+        get
         {
-            if (StockQuantity <= 10)
+            if (StockQuantity == 0)
+                return "Hết hàng";
+            else if (StockQuantity <= 10)
                 return "Sắp hết";
             else if (StockQuantity <= 50)
                 return "Trung bình";

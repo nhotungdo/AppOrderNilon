@@ -129,32 +129,77 @@ namespace AppOrderNilon.Views
         // Event Handlers
         private void Orders_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Open order management window
-            MessageBox.Show("Mở quản lý đơn hàng", "Thông báo");
+            try
+            {
+                // Mở window quản lý đơn hàng cho staff
+                StaffOrderManagementWindow orderWindow = new StaffOrderManagementWindow(currentStaff);
+                orderWindow.Show();
+                this.WindowState = WindowState.Minimized;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở quản lý đơn hàng: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Tasks_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Open task management window
-            MessageBox.Show("Mở quản lý nhiệm vụ", "Thông báo");
+            try
+            {
+                // Mở window quản lý nhiệm vụ cho staff
+                StaffTaskManagementWindow taskWindow = new StaffTaskManagementWindow(currentStaff);
+                taskWindow.Show();
+                this.WindowState = WindowState.Minimized;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở quản lý nhiệm vụ: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Inventory_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Open inventory management window
-            MessageBox.Show("Mở quản lý tồn kho", "Thông báo");
+            try
+            {
+                // Mở window quản lý tồn kho cho staff
+                StaffInventoryManagementWindow inventoryWindow = new StaffInventoryManagementWindow(currentStaff);
+                inventoryWindow.Show();
+                this.WindowState = WindowState.Minimized;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở quản lý tồn kho: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Customers_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Open customer management window
-            MessageBox.Show("Mở quản lý khách hàng", "Thông báo");
+            try
+            {
+                // Mở window quản lý khách hàng cho staff
+                StaffCustomerManagementWindow customerWindow = new StaffCustomerManagementWindow(currentStaff);
+                customerWindow.Show();
+                this.WindowState = WindowState.Minimized;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở quản lý khách hàng: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Reports_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Open reports window
-            MessageBox.Show("Mở báo cáo", "Thông báo");
+            try
+            {
+                // Mở window báo cáo cho staff
+                StaffReportWindow reportWindow = new StaffReportWindow(currentStaff);
+                reportWindow.Show();
+                this.WindowState = WindowState.Minimized;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở báo cáo: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void RefreshOrders_Click(object sender, RoutedEventArgs e)
@@ -166,20 +211,71 @@ namespace AppOrderNilon.Views
 
         private void AddTask_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Open add task dialog
-            MessageBox.Show("Thêm nhiệm vụ mới", "Thông báo");
+            try
+            {
+                // Mở dialog thêm nhiệm vụ mới
+                StaffTaskFormWindow taskForm = new StaffTaskFormWindow(currentStaff);
+                if (taskForm.ShowDialog() == true)
+                {
+                    LoadStaffTasks(); // Reload tasks after adding
+                    MessageBox.Show("Đã thêm nhiệm vụ mới!", "Thông báo");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi thêm nhiệm vụ: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void UpdateTask_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Open update task dialog
-            MessageBox.Show("Cập nhật nhiệm vụ", "Thông báo");
+            try
+            {
+                var selectedTask = dgTasks.SelectedItem as StaffTask;
+                if (selectedTask != null)
+                {
+                    // Mở dialog cập nhật nhiệm vụ
+                    StaffTaskFormWindow taskForm = new StaffTaskFormWindow(currentStaff, selectedTask);
+                    if (taskForm.ShowDialog() == true)
+                    {
+                        LoadStaffTasks(); // Reload tasks after updating
+                        MessageBox.Show("Đã cập nhật nhiệm vụ!", "Thông báo");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Vui lòng chọn một nhiệm vụ để cập nhật!", "Thông báo");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi cập nhật nhiệm vụ: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void RequestRestock_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Send restock request
-            MessageBox.Show("Đã gửi yêu cầu nhập hàng!", "Thông báo");
+            try
+            {
+                var selectedProduct = dgInventory.SelectedItem as Product;
+                if (selectedProduct != null)
+                {
+                    // Mở dialog yêu cầu nhập hàng
+                    StaffRestockRequestWindow restockWindow = new StaffRestockRequestWindow(currentStaff, selectedProduct);
+                    if (restockWindow.ShowDialog() == true)
+                    {
+                        MessageBox.Show("Đã gửi yêu cầu nhập hàng!", "Thông báo");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Vui lòng chọn một sản phẩm để yêu cầu nhập hàng!", "Thông báo");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi gửi yêu cầu nhập hàng: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Logout_Click(object sender, RoutedEventArgs e)

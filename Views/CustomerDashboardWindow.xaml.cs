@@ -46,28 +46,28 @@ namespace AppOrderNilon.Views
         {
             promotions = new List<CustomerPromotion>
             {
-                new CustomerPromotion 
-                { 
-                    PromotionId = 1, 
-                    Title = "Giảm 10% cho đơn hàng đầu tiên", 
+                new CustomerPromotion
+                {
+                    PromotionId = 1,
+                    Title = "Giảm 10% cho đơn hàng đầu tiên",
                     Description = "Áp dụng cho tất cả sản phẩm nilon",
                     DiscountPercent = 10,
                     ExpiryDate = new DateTime(2025, 12, 31),
                     IsActive = true
                 },
-                new CustomerPromotion 
-                { 
-                    PromotionId = 2, 
-                    Title = "Miễn phí vận chuyển", 
+                new CustomerPromotion
+                {
+                    PromotionId = 2,
+                    Title = "Miễn phí vận chuyển",
                     Description = "Cho đơn hàng từ 500,000 VNĐ",
                     DiscountPercent = 0,
                     ExpiryDate = new DateTime(2025, 8, 15),
                     IsActive = true
                 },
-                new CustomerPromotion 
-                { 
-                    PromotionId = 3, 
-                    Title = "Tích điểm thưởng", 
+                new CustomerPromotion
+                {
+                    PromotionId = 3,
+                    Title = "Tích điểm thưởng",
                     Description = "1,250 điểm hiện có - Đổi 1,000 điểm = 50,000 VNĐ",
                     DiscountPercent = 0,
                     ExpiryDate = new DateTime(2025, 12, 31),
@@ -97,32 +97,81 @@ namespace AppOrderNilon.Views
         // Event Handlers
         private void MyOrders_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Open detailed order management window
-            MessageBox.Show("Mở quản lý đơn hàng chi tiết", "Thông báo");
+            try
+            {
+                CustomerOrderManagementWindow orderWindow = new CustomerOrderManagementWindow(currentCustomer);
+                orderWindow.Show();
+                this.WindowState = WindowState.Minimized;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở quản lý đơn hàng: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void PlaceOrder_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Open new order window
-            MessageBox.Show("Mở form đặt hàng mới", "Thông báo");
+            try
+            {
+                CreateOrderWindow orderWindow = new CreateOrderWindow(currentCustomer);
+                if (orderWindow.ShowDialog() == true)
+                {
+                    // Refresh order data after creating new order
+                    LoadData();
+                    MessageBox.Show("Đặt hàng thành công!", "Thông báo");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi đặt hàng: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Profile_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Open profile management window
-            MessageBox.Show("Mở quản lý hồ sơ", "Thông báo");
+            try
+            {
+                CustomerProfileWindow profileWindow = new CustomerProfileWindow(currentCustomer);
+                if (profileWindow.ShowDialog() == true)
+                {
+                    // Refresh customer data after updating profile
+                    currentCustomer = profileWindow.UpdatedCustomer;
+                    InitializeControls();
+                    MessageBox.Show("Cập nhật hồ sơ thành công!", "Thông báo");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở hồ sơ: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Rewards_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Open rewards/promotions window
-            MessageBox.Show("Mở quản lý ưu đãi", "Thông báo");
+            try
+            {
+                CustomerPromotionWindow promotionWindow = new CustomerPromotionWindow(currentCustomer);
+                promotionWindow.Show();
+                this.WindowState = WindowState.Minimized;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở ưu đãi: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Support_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Open support window
-            MessageBox.Show("Mở hỗ trợ khách hàng", "Thông báo");
+            try
+            {
+                CustomerSupportWindow supportWindow = new CustomerSupportWindow(currentCustomer);
+                supportWindow.Show();
+                this.WindowState = WindowState.Minimized;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi mở hỗ trợ: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void TrackOrder_Click(object sender, RoutedEventArgs e)
@@ -184,9 +233,9 @@ namespace AppOrderNilon.Views
         {
             if (dgOrderHistory.SelectedItem is Order selectedOrder)
             {
-                var result = MessageBox.Show($"Bạn có chắc chắn muốn hủy đơn hàng #{selectedOrder.OrderId}?", 
+                var result = MessageBox.Show($"Bạn có chắc chắn muốn hủy đơn hàng #{selectedOrder.OrderId}?",
                     "Xác nhận hủy đơn hàng", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                
+
                 if (result == MessageBoxResult.Yes)
                 {
                     // TODO: Cancel order logic
@@ -217,9 +266,9 @@ namespace AppOrderNilon.Views
 
         private void Logout_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận", 
+            var result = MessageBox.Show("Bạn có chắc chắn muốn đăng xuất?", "Xác nhận",
                 MessageBoxButton.YesNo, MessageBoxImage.Question);
-            
+
             if (result == MessageBoxResult.Yes)
             {
                 LoginWindow loginWindow = new LoginWindow();
@@ -239,4 +288,4 @@ namespace AppOrderNilon.Views
         public DateTime ExpiryDate { get; set; }
         public bool IsActive { get; set; }
     }
-} 
+}

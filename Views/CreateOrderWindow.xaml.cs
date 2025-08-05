@@ -13,6 +13,7 @@ namespace AppOrderNilon.Views
         private decimal _subtotal = 0;
         private decimal _discountPercent = 0;
         private decimal _totalAmount = 0;
+        private Customer _currentCustomer;
 
         public class OrderDetailData
         {
@@ -24,9 +25,10 @@ namespace AppOrderNilon.Views
             public string Notes { get; set; } = string.Empty;
         }
 
-        public CreateOrderWindow()
+        public CreateOrderWindow(Customer currentCustomer = null)
         {
             InitializeComponent();
+            _currentCustomer = currentCustomer;
             InitializeData();
         }
 
@@ -42,16 +44,33 @@ namespace AppOrderNilon.Views
 
         private void LoadCustomers()
         {
-            // Sample data - in real app, this would load from database
-            _customers = new ObservableCollection<Customer>
+            if (_currentCustomer != null)
             {
-                new Customer { CustomerId = 1, CustomerName = "Công ty Xây dựng Minh Anh", Phone = "0901234567", Email = "info@minhanh.com", Address = "123 Đường ABC, Quận 1, TP.HCM" },
-                new Customer { CustomerId = 2, CustomerName = "Lê Văn C", Phone = "0912345678", Email = "levanc@gmail.com", Address = "456 Đường XYZ, Quận 2, TP.HCM" },
-                new Customer { CustomerId = 3, CustomerName = "Công ty Thầu XYZ", Phone = "0923456789", Email = "contact@xyz.com", Address = "789 Đường DEF, Quận 3, TP.HCM" }
-            };
+                // If current customer is provided, use only that customer
+                _customers = new ObservableCollection<Customer> { _currentCustomer };
+                cboCustomer.ItemsSource = _customers;
+                cboCustomer.SelectedItem = _currentCustomer;
+                cboCustomer.IsEnabled = false; // Disable selection since it's the current customer
 
-            cboCustomer.ItemsSource = _customers;
-            cboCustomer.DisplayMemberPath = "CustomerName";
+                // Hide the "Add Customer" button since we're using current customer
+                btnAddCustomer.Visibility = Visibility.Collapsed;
+
+                // Auto-fill delivery address
+                txtDeliveryAddress.Text = _currentCustomer.Address ?? "";
+            }
+            else
+            {
+                // Sample data - in real app, this would load from database
+                _customers = new ObservableCollection<Customer>
+                {
+                    new Customer { CustomerId = 1, CustomerName = "Công ty Xây dựng Minh Anh", Phone = "0901234567", Email = "info@minhanh.com", Address = "123 Đường ABC, Quận 1, TP.HCM" },
+                    new Customer { CustomerId = 2, CustomerName = "Lê Văn C", Phone = "0912345678", Email = "levanc@gmail.com", Address = "456 Đường XYZ, Quận 2, TP.HCM" },
+                    new Customer { CustomerId = 3, CustomerName = "Công ty Thầu XYZ", Phone = "0923456789", Email = "contact@xyz.com", Address = "789 Đường DEF, Quận 3, TP.HCM" }
+                };
+
+                cboCustomer.ItemsSource = _customers;
+                cboCustomer.DisplayMemberPath = "CustomerName";
+            }
         }
 
         private void LoadProducts()
@@ -192,9 +211,12 @@ namespace AppOrderNilon.Views
             decimal discountAmount = _subtotal * (_discountPercent / 100);
             _totalAmount = _subtotal - discountAmount;
 
-            txtSubtotal.Text = $"{_subtotal:N0} VNĐ";
-            txtDiscountAmount.Text = $"{discountAmount:N0} VNĐ";
-            txtTotalAmount.Text = $"{_totalAmount:N0} VNĐ";
+            if (txtSubtotal != null)
+                txtSubtotal.Text = $"{_subtotal:N0} VNĐ";
+            if (txtDiscountAmount != null)
+                txtDiscountAmount.Text = $"{discountAmount:N0} VNĐ";
+            if (txtTotalAmount != null)
+                txtTotalAmount.Text = $"{_totalAmount:N0} VNĐ";
         }
 
         private void btnAddCustomer_Click(object sender, RoutedEventArgs e)
