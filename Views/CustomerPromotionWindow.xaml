@@ -13,7 +13,7 @@
 
         <!-- Header -->
         <Border Grid.Row="0" 
-                Background="#FF9800" 
+                Background="#2196F3" 
                 Padding="20,15">
             <Grid>
                 <Grid.ColumnDefinitions>

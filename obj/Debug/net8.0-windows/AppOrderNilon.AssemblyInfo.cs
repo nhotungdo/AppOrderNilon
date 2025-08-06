@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AppOrderNilon")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bed186aca6f0a25bbfb13b323d2fd089e8c2a849")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6dccbede1f5b9202ae1ff5f9d6ab1f476aae0595")]
 [assembly: System.Reflection.AssemblyProductAttribute("AppOrderNilon")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AppOrderNilon")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

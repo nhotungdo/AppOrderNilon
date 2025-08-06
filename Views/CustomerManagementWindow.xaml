@@ -93,7 +93,7 @@
                 <!-- Add Customer Button -->
                 <Button Grid.Column="2" 
                         Content="+ Thêm khách hàng" 
-                        Background="#FF9800" 
+                        Background="#2196F3" 
                         Foreground="White" 
                         FontWeight="SemiBold"
                         Height="35" 

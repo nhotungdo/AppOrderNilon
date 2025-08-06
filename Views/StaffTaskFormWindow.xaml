@@ -13,7 +13,7 @@
                           Color="#22000000"/>
         
         <Style x:Key="StaffButton" TargetType="Button">
-            <Setter Property="Background" Value="#FF6B35"/>
+            <Setter Property="Background" Value="#2196F3"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Padding" Value="15,8"/>
@@ -32,7 +32,7 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#E55A2B"/>
+                    <Setter Property="Background" Value="#2196F3"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -45,7 +45,7 @@
         </Grid.RowDefinitions>
         
         <!-- Header -->
-        <Border Grid.Row="0" Background="#FF6B35" Padding="15">
+        <Border Grid.Row="0" Background="#2196F3" Padding="15">
             <TextBlock x:Name="txtTitle" 
                        Text="Thêm nhiệm vụ mới" 
                        FontSize="20" 

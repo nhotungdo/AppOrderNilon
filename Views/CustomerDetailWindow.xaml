@@ -5,6 +5,14 @@
         WindowStartupLocation="CenterOwner"
         Background="#F5F5F5">
     
+    <Window.Resources>
+        <DropShadowEffect x:Key="CardShadow" 
+                          BlurRadius="8" 
+                          Direction="270" 
+                          ShadowDepth="2" 
+                          Color="#22000000"/>
+    </Window.Resources>
+    
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
