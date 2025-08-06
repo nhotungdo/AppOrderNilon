@@ -67,23 +67,26 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 
-                <!-- Statistics Cards -->
+                <!-- Statistics Cards - Vertical Layout -->
                 <Grid Grid.Row="0" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
                     
                     <!-- Total Revenue -->
-                    <Border Grid.Column="0" 
+                    <Border Grid.Row="0" Grid.Column="0" 
                             Background="White" 
                             CornerRadius="10" 
                             Padding="20" 
-                            Margin="0,0,10,0"
+                            Margin="0,0,10,10"
                             Effect="{StaticResource CardShadow}">
                         <StackPanel>
                             <TextBlock Text="Tổng doanh thu" 
@@ -103,11 +106,11 @@
                     </Border>
                     
                     <!-- Total Orders -->
-                    <Border Grid.Column="1" 
+                    <Border Grid.Row="0" Grid.Column="1" 
                             Background="White" 
                             CornerRadius="10" 
                             Padding="20" 
-                            Margin="5,0,5,0"
+                            Margin="10,0,0,10"
                             Effect="{StaticResource CardShadow}">
                         <StackPanel>
                             <TextBlock Text="Tổng đơn hàng" 
@@ -127,11 +130,11 @@
                     </Border>
                     
                     <!-- Products Sold -->
-                    <Border Grid.Column="2" 
+                    <Border Grid.Row="1" Grid.Column="0" 
                             Background="White" 
                             CornerRadius="10" 
                             Padding="20" 
-                            Margin="5,0,5,0"
+                            Margin="0,10,10,0"
                             Effect="{StaticResource CardShadow}">
                         <StackPanel>
                             <TextBlock Text="Sản phẩm đã bán" 
@@ -151,11 +154,11 @@
                     </Border>
                     
                     <!-- Pending Orders -->
-                    <Border Grid.Column="3" 
+                    <Border Grid.Row="1" Grid.Column="1" 
                             Background="White" 
                             CornerRadius="10" 
                             Padding="20" 
-                            Margin="10,0,0,0"
+                            Margin="10,10,0,0"
                             Effect="{StaticResource CardShadow}">
                         <StackPanel>
                             <TextBlock Text="Đơn hàng chờ xử lý" 
@@ -308,7 +311,7 @@
                     </Border>
                 </Grid>
                 
-                <!-- Quick Actions -->
+                <!-- Quick Actions - Vertical Layout -->
                 <Border Grid.Row="2" 
                         Background="White" 
                         CornerRadius="10" 
@@ -320,121 +323,110 @@
                                    FontWeight="Bold" 
                                    Margin="0,0,0,15"/>
                         
+                        <!-- Main Management Buttons -->
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
                             
-                            <Button Grid.Column="0" 
+                            <Button Grid.Row="0" Grid.Column="0" 
                                     Content="Quản lý sản phẩm" 
                                     Height="50" 
                                     Background="#2196F3" 
                                     Foreground="White" 
                                     FontWeight="SemiBold"
-                                    Margin="0,0,10,0"
+                                    Margin="0,0,10,10"
                                     Click="ManageProducts_Click"/>
                             
-                            <Button Grid.Column="1" 
+                            <Button Grid.Row="0" Grid.Column="1" 
                                     Content="Quản lý đơn hàng" 
                                     Height="50" 
                                     Background="#4CAF50" 
                                     Foreground="White" 
                                     FontWeight="SemiBold"
-                                    Margin="5,0,5,0"
+                                    Margin="10,0,0,10"
                                     Click="ManageOrders_Click"/>
                             
-                            <Button Grid.Column="2" 
+                            <Button Grid.Row="1" Grid.Column="0" 
                                     Content="Quản lý khách hàng" 
                                     Height="50" 
                                     Background="#FF9800" 
                                     Foreground="White" 
                                     FontWeight="SemiBold"
-                                    Margin="5,0,5,0"
+                                    Margin="0,0,10,10"
                                     Click="ManageCustomers_Click"/>
                             
-                            <Button Grid.Column="3" 
+                            <Button Grid.Row="1" Grid.Column="1" 
                                     Content="Báo cáo &amp; Thống kê" 
                                     Height="50" 
                                     Background="#9C27B0" 
                                     Foreground="White" 
                                     FontWeight="SemiBold"
-                                    Margin="10,0,0,0"
+                                    Margin="10,0,0,10"
                                     Click="Reports_Click"/>
-                        </Grid>
-                        
-                        <!-- Additional Admin Actions -->
-                        <Grid Margin="0,20,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
                             
-                            <Button Grid.Column="0" 
+                            <Button Grid.Row="2" Grid.Column="0" 
                                     Content="Quản lý Staff &amp; Customer" 
                                     Height="50" 
                                     Background="#607D8B" 
                                     Foreground="White" 
                                     FontWeight="SemiBold"
-                                    Margin="0,0,10,0"
+                                    Margin="0,0,10,10"
                                     Click="ManageStaffAndCustomers_Click"/>
                             
-                            <Button Grid.Column="1" 
+                            <Button Grid.Row="2" Grid.Column="1" 
                                     Content="Quản lý Danh mục" 
                                     Height="50" 
                                     Background="#795548" 
                                     Foreground="White" 
                                     FontWeight="SemiBold"
-                                    Margin="5,0,5,0"
+                                    Margin="10,0,0,10"
                                     Click="ManageCategories_Click"/>
                             
-                            <Button Grid.Column="2" 
-                                    Content="Cài đặt hệ thống" 
-                                    Height="50" 
-                                    Background="#795548" 
-                                    Foreground="White" 
-                                    FontWeight="SemiBold"
-                                    Margin="10,0,0,0"
-                                    Click="SystemSettings_Click"/>
-                        </Grid>
-                        
-                        <!-- Additional Management Actions -->
-                        <Grid Margin="0,20,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            
-                            <Button Grid.Column="0" 
+                            <Button Grid.Row="3" Grid.Column="0" 
                                     Content="Quản lý Nhân viên" 
                                     Height="50" 
                                     Background="#E91E63" 
                                     Foreground="White" 
                                     FontWeight="SemiBold"
-                                    Margin="0,0,10,0"
+                                    Margin="0,0,10,10"
                                     Click="ManageStaff_Click"/>
                             
-                            <Button Grid.Column="1" 
+                            <Button Grid.Row="3" Grid.Column="1" 
                                     Content="Quản lý Nhà cung cấp" 
                                     Height="50" 
                                     Background="#00BCD4" 
                                     Foreground="White" 
                                     FontWeight="SemiBold"
-                                    Margin="5,0,5,0"
+                                    Margin="10,0,0,10"
                                     Click="ManageSuppliers_Click"/>
                             
-                            <Button Grid.Column="2" 
+                            <Button Grid.Row="4" Grid.Column="0" 
                                     Content="Quản lý Báo cáo" 
                                     Height="50" 
                                     Background="#8BC34A" 
                                     Foreground="White" 
                                     FontWeight="SemiBold"
-                                    Margin="10,0,0,0"
+                                    Margin="0,0,10,10"
                                     Click="ManageReports_Click"/>
+                            
+                            <Button Grid.Row="4" Grid.Column="1" 
+                                    Content="Cài đặt hệ thống" 
+                                    Height="50" 
+                                    Background="#795548" 
+                                    Foreground="White" 
+                                    FontWeight="SemiBold"
+                                    Margin="10,0,0,10"
+                                    Click="SystemSettings_Click"/>
                         </Grid>
                     </StackPanel>
                 </Border>

@@ -194,8 +194,8 @@ namespace AppOrderNilon.Views
             {
                 // Tạo một window mới để quản lý cả Staff và Customer
                 var result = MessageBox.Show("Chọn loại quản lý:\n\n" +
-                    "• Nhấn 'Yes' để mở Quản lý Staff\n" +
-                    "• Nhấn 'No' để mở Quản lý Customer\n" +
+                    "• Nhấn 'Staff' để mở Quản lý Staff\n" +
+                    "• Nhấn 'Customer' để mở Quản lý Customer\n" +
                     "• Nhấn 'Cancel' để hủy", 
                     "Chọn chức năng", 
                     MessageBoxButton.YesNoCancel, 

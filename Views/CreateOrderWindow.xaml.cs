@@ -30,6 +30,38 @@ namespace AppOrderNilon.Views
             InitializeComponent();
             _currentCustomer = currentCustomer;
             InitializeData();
+
+            // Set focus to product search for better UX
+            txtProductSearch.Focus();
+
+            // Add keyboard shortcuts
+            this.KeyDown += CreateOrderWindow_KeyDown;
+        }
+
+        private void CreateOrderWindow_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            // Ctrl+S to save order
+            if (e.Key == System.Windows.Input.Key.S &&
+                (System.Windows.Input.Keyboard.Modifiers & System.Windows.Input.ModifierKeys.Control) == System.Windows.Input.ModifierKeys.Control)
+            {
+                btnSaveOrder_Click(sender, e);
+                e.Handled = true;
+            }
+
+            // Ctrl+P to save and print
+            if (e.Key == System.Windows.Input.Key.P &&
+                (System.Windows.Input.Keyboard.Modifiers & System.Windows.Input.ModifierKeys.Control) == System.Windows.Input.ModifierKeys.Control)
+            {
+                btnSaveAndPrint_Click(sender, e);
+                e.Handled = true;
+            }
+
+            // F5 to preview order
+            if (e.Key == System.Windows.Input.Key.F5)
+            {
+                btnPreview_Click(sender, e);
+                e.Handled = true;
+            }
         }
 
         private void InitializeData()
@@ -130,8 +162,17 @@ namespace AppOrderNilon.Views
             {
                 if (!int.TryParse(txtQuantity.Text, out int quantity) || quantity <= 0)
                 {
-                    MessageBox.Show("Vui lòng nhập số lượng hợp lệ!", "Thông báo",
+                    MessageBox.Show("❌ Vui lòng nhập số lượng hợp lệ (lớn hơn 0)!", "Thông báo",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
+                    txtQuantity.Focus();
+                    return;
+                }
+
+                // Check stock availability
+                if (quantity > selectedProduct.StockQuantity)
+                {
+                    MessageBox.Show($"⚠️ Số lượng vượt quá tồn kho!\n\nSản phẩm: {selectedProduct.ProductName}\nTồn kho: {selectedProduct.StockQuantity}\nBạn yêu cầu: {quantity}",
+                        "Cảnh báo tồn kho", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -139,7 +180,15 @@ namespace AppOrderNilon.Views
                 var existingProduct = _selectedProducts.FirstOrDefault(p => p.ProductId == selectedProduct.ProductId);
                 if (existingProduct != null)
                 {
-                    existingProduct.Quantity += quantity;
+                    var newTotalQuantity = existingProduct.Quantity + quantity;
+                    if (newTotalQuantity > selectedProduct.StockQuantity)
+                    {
+                        MessageBox.Show($"⚠️ Tổng số lượng vượt quá tồn kho!\n\nSản phẩm: {selectedProduct.ProductName}\nTồn kho: {selectedProduct.StockQuantity}\nĐã có: {existingProduct.Quantity}\nThêm: {quantity}\nTổng: {newTotalQuantity}",
+                            "Cảnh báo tồn kho", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    existingProduct.Quantity = newTotalQuantity;
                     existingProduct.Subtotal = existingProduct.UnitPrice * existingProduct.Quantity;
                 }
                 else
@@ -164,11 +213,16 @@ namespace AppOrderNilon.Views
 
                 UpdateOrderSummary();
                 dgSelectedProducts.Items.Refresh();
+
+                // Show success message
+                MessageBox.Show($"✅ Đã thêm sản phẩm thành công!\n\n📦 {selectedProduct.ProductName}\n📊 Số lượng: {quantity}\n💰 Thành tiền: {(selectedProduct.UnitPrice * quantity):N0} VNĐ",
+                    "Thêm sản phẩm", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn sản phẩm!", "Thông báo",
+                MessageBox.Show("❌ Vui lòng chọn sản phẩm từ danh sách!", "Thông báo",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
+                cboProduct.Focus();
             }
         }
 
@@ -188,11 +242,30 @@ namespace AppOrderNilon.Views
         {
             if (decimal.TryParse(txtDiscountPercent.Text ?? "", out decimal discountPercent))
             {
-                _discountPercent = Math.Max(0, Math.Min(100, discountPercent));
+                // Validate discount range (0-100%)
+                if (discountPercent < 0)
+                {
+                    txtDiscountPercent.Text = "0";
+                    _discountPercent = 0;
+                }
+                else if (discountPercent > 100)
+                {
+                    txtDiscountPercent.Text = "100";
+                    _discountPercent = 100;
+                }
+                else
+                {
+                    _discountPercent = discountPercent;
+                }
                 UpdateOrderSummary();
             }
             else
             {
+                // If invalid input, reset to 0
+                if (!string.IsNullOrEmpty(txtDiscountPercent.Text))
+                {
+                    txtDiscountPercent.Text = "0";
+                }
                 _discountPercent = 0;
                 UpdateOrderSummary();
             }
@@ -253,27 +326,50 @@ namespace AppOrderNilon.Views
 
         private bool ValidateOrder()
         {
+            // Validate customer selection
             if (cboCustomer.SelectedItem == null)
             {
-                MessageBox.Show("Vui lòng chọn khách hàng!", "Thông báo",
+                MessageBox.Show("❌ Vui lòng chọn khách hàng!", "Thông báo",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 cboCustomer.Focus();
                 return false;
             }
 
+            // Validate products
             if (_selectedProducts == null || _selectedProducts.Count == 0)
             {
-                MessageBox.Show("Vui lòng thêm ít nhất một sản phẩm vào đơn hàng!", "Thông báo",
+                MessageBox.Show("❌ Vui lòng thêm ít nhất một sản phẩm vào đơn hàng!", "Thông báo",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
 
+            // Validate delivery address
             if (string.IsNullOrWhiteSpace(txtDeliveryAddress.Text))
             {
-                MessageBox.Show("Vui lòng nhập địa chỉ giao hàng!", "Thông báo",
+                MessageBox.Show("❌ Vui lòng nhập địa chỉ giao hàng!", "Thông báo",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 txtDeliveryAddress.Focus();
                 return false;
+            }
+
+            // Validate total amount
+            if (_totalAmount <= 0)
+            {
+                MessageBox.Show("❌ Tổng tiền đơn hàng phải lớn hơn 0!", "Thông báo",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            // Validate stock availability for all products
+            foreach (var product in _selectedProducts)
+            {
+                var originalProduct = _products.FirstOrDefault(p => p.ProductId == product.ProductId);
+                if (originalProduct != null && product.Quantity > originalProduct.StockQuantity)
+                {
+                    MessageBox.Show($"⚠️ Sản phẩm '{product.ProductName}' vượt quá tồn kho!\n\nTồn kho: {originalProduct.StockQuantity}\nĐơn hàng: {product.Quantity}",
+                        "Cảnh báo tồn kho", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return false;
+                }
             }
 
             return true;
@@ -311,19 +407,49 @@ namespace AppOrderNilon.Views
             {
                 // In real app, this would save to database
                 var orderCode = GenerateOrderCode();
+                var customer = cboCustomer.SelectedItem as Customer;
 
-                var result = MessageBox.Show($"Đơn hàng sẽ được lưu với mã: {orderCode}\n\nBạn có muốn tiếp tục?",
+                var confirmMessage = $"📋 XÁC NHẬN LƯU ĐƠN HÀNG\n\n";
+                confirmMessage += $"👤 Khách hàng: {customer?.CustomerName}\n";
+                confirmMessage += $"📦 Số sản phẩm: {_selectedProducts?.Count ?? 0} loại\n";
+                confirmMessage += $"💰 Tổng tiền: {_totalAmount:N0} VNĐ\n";
+                confirmMessage += $"📋 Mã đơn hàng: {orderCode}\n\n";
+                confirmMessage += $"Bạn có muốn lưu đơn hàng này?";
+
+                var result = MessageBox.Show(confirmMessage,
                     "Xác nhận lưu đơn hàng", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    // Simulate saving
-                    MessageBox.Show($"✅ Đã lưu đơn hàng thành công!\n\n📋 Mã đơn hàng: {orderCode}\n💰 Tổng tiền: {_totalAmount:N0} VNĐ",
-                        "Lưu đơn hàng", MessageBoxButton.OK, MessageBoxImage.Information);
+                    // Simulate saving with progress
+                    var progressMessage = $"💾 Đang lưu đơn hàng...\n\n";
+                    progressMessage += $"📋 Mã: {orderCode}\n";
+                    progressMessage += $"👤 Khách hàng: {customer?.CustomerName}\n";
+                    progressMessage += $"📦 Sản phẩm: {_selectedProducts?.Count ?? 0} loại\n";
+                    progressMessage += $"💰 Tổng tiền: {_totalAmount:N0} VNĐ";
+
+                    MessageBox.Show(progressMessage, "Đang lưu...", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    // Success message
+                    var successMessage = $"✅ ĐÃ LƯU ĐƠN HÀNG THÀNH CÔNG!\n\n";
+                    successMessage += $"📋 Mã đơn hàng: {orderCode}\n";
+                    successMessage += $"👤 Khách hàng: {customer?.CustomerName}\n";
+                    successMessage += $"📦 Số sản phẩm: {_selectedProducts?.Count ?? 0} loại\n";
+                    successMessage += $"💰 Tổng tiền: {_totalAmount:N0} VNĐ\n";
+                    successMessage += $"📅 Ngày tạo: {DateTime.Now:dd/MM/yyyy HH:mm}\n\n";
+                    successMessage += $"Đơn hàng đã được lưu vào hệ thống.";
+
+                    MessageBox.Show(successMessage, "Lưu đơn hàng thành công", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     if (printAfterSave)
                     {
-                        MessageBox.Show("🖨️ Đang in hóa đơn...", "In hóa đơn",
+                        var printMessage = $"🖨️ ĐANG IN HÓA ĐƠN\n\n";
+                        printMessage += $"📋 Mã đơn hàng: {orderCode}\n";
+                        printMessage += $"👤 Khách hàng: {customer?.CustomerName}\n";
+                        printMessage += $"💰 Tổng tiền: {_totalAmount:N0} VNĐ\n\n";
+                        printMessage += $"Vui lòng kiểm tra máy in...";
+
+                        MessageBox.Show(printMessage, "In hóa đơn",
                             MessageBoxButton.OK, MessageBoxImage.Information);
                     }
 
@@ -333,8 +459,8 @@ namespace AppOrderNilon.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"❌ Lỗi khi lưu đơn hàng: {ex.Message}", "Lỗi",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"❌ LỖI KHI LƯU ĐƠN HÀNG\n\nChi tiết lỗi: {ex.Message}\n\nVui lòng thử lại hoặc liên hệ hỗ trợ.",
+                    "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

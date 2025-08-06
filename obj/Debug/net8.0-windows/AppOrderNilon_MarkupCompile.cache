@@ -1,18 +1,18 @@
 ﻿AppOrderNilon
-
+1.0.0.0
 
 winexe
 C#
 .cs
-F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\
+f:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\obj\Debug\net8.0-windows\
 AppOrderNilon
 none
 false
-TRACE;DEBUG;NET;NET8_0;NETCOREAPP
-F:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\App.xaml
+TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
+f:\PRN212-REVIEW\AppOrderNilon\AppOrderNilon\App.xaml
 38-1585089408
 
-61-1787424426
+631699194630
 229-1266511630
 MainWindow.xaml;Views\AdminFormWindow.xaml;Views\AdminManagementWindow.xaml;Views\CategoryFormWindow.xaml;Views\CategoryManagementWindow.xaml;Views\CreateOrderWindow.xaml;Views\CustomerDashboardWindow.xaml;Views\CustomerDetailWindow.xaml;Views\CustomerFormWindow.xaml;Views\CustomerManagementWindow.xaml;Views\CustomerOrderManagementWindow.xaml;Views\CustomerProfileWindow.xaml;Views\CustomerPromotionWindow.xaml;Views\CustomerSupportWindow.xaml;Views\DashboardWindow.xaml;Views\LoginWindow.xaml;Views\OrderDetailWindow.xaml;Views\OrderManagementWindow.xaml;Views\ProductDetailWindow.xaml;Views\ProductManagementWindow.xaml;Views\RegisterWindow.xaml;Views\ReportDetailWindow.xaml;Views\ReportFormWindow.xaml;Views\ReportManagementWindow.xaml;Views\ReportWindow.xaml;Views\StaffCustomerManagementWindow.xaml;Views\StaffDashboardWindow.xaml;Views\StaffFormWindow.xaml;Views\StaffInventoryManagementWindow.xaml;Views\StaffManagementWindow.xaml;Views\StaffOrderManagementWindow.xaml;Views\StaffReportWindow.xaml;Views\StaffRestockRequestWindow.xaml;Views\StaffTaskFormWindow.xaml;Views\StaffTaskManagementWindow.xaml;Views\SupplierFormWindow.xaml;Views\SupplierManagementWindow.xaml;Views\SystemSettingsWindow.xaml;
 
